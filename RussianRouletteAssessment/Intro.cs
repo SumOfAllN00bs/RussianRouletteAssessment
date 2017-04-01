@@ -14,11 +14,12 @@ using System.Windows.Forms;
 
 namespace RussianRouletteAssessment
 {
-    public partial class frm_Intro : Form
+    public partial class frm_PlayerProfile : Form
     {
         //public variables for use in other parts of the program
         public static string profile_Name;
         public static string pic_Name;
+        public static Image profile_Pic;
 
         //private variables
         private Assembly assembly;
@@ -34,6 +35,7 @@ namespace RussianRouletteAssessment
             }
             imagestream = assembly.GetManifestResourceStream(frm_Menu.ProfilePictures[index][0]);
             pb_ProfilePic.Image = new Bitmap(imagestream);
+            profile_Pic = pb_ProfilePic.Image;
         }
         //overloaded
         private void set_PictureBox_To_Profile_Picture(string byName)
@@ -42,7 +44,7 @@ namespace RussianRouletteAssessment
             set_PictureBox_To_Profile_Picture(frm_Menu.ProfilePicturesGetIndex(byName));
         }
 
-        public frm_Intro()
+        public frm_PlayerProfile()
         {
             InitializeComponent();
         }

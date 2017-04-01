@@ -22,6 +22,8 @@ namespace RussianRouletteAssessment
 
         //file name of scores database
         public static string HighScoresFilename = "scores.csv";
+        //the number of fields used in the highscore records
+        public static int HighScoresFileFieldsCount = 8;
         //all the profile pictures embedded in the program and names to use when listing them must remember this is jagged array
         public static string[][] ProfilePictures = new string[][] {     new string []{"RussianRouletteAssessment.PlayerIcons.abstract-007.png", "Abstract 1"},
                                                                         new string []{"RussianRouletteAssessment.PlayerIcons.abstract-061.png", "Abstract 2"},
@@ -48,8 +50,10 @@ namespace RussianRouletteAssessment
                                                                         new string []{"RussianRouletteAssessment.PlayerIcons.mite-alt.png", "Mite Alt"},
                                                                         new string []{"RussianRouletteAssessment.PlayerIcons.overkill.png", "Overkill"},
                                                                         new string []{"RussianRouletteAssessment.PlayerIcons.pistol-gun.png", "Pistol Gun"}};
+        //private variables
+        private bool Cheating = false;
         //will be first thing player sees
-        frm_Intro PlayerProfile = new frm_Intro();
+        private frm_PlayerProfile PlayerProfile = new frm_PlayerProfile();
 
         public static int ProfilePicturesGetIndex(string byName)
         {
@@ -64,9 +68,113 @@ namespace RussianRouletteAssessment
 
         private void frm_Menu_Load(object sender, EventArgs e)
         {
+
+            this.KeyPreview = true;
             //Get the player to either fill in a new profile or load one from stored in the highscores data base
             PlayerProfile.ShowDialog();
-            this.Text = "Main Menu - Welcome " + frm_Intro.profile_Name;
+            pb_ProfilePic.Image = frm_PlayerProfile.profile_Pic;
+            this.Text = "Main Menu - Welcome " + frm_PlayerProfile.profile_Name;
+            txt_UserName.Text = frm_PlayerProfile.profile_Name;
+            try
+            {
+                if (File.Exists(HighScoresFilename))
+                {
+                    using (StreamReader reader = new StreamReader(HighScoresFilename))
+                    {
+                        string playerinfo = "";
+                        bool player_found = false;
+                        bool fieldformatfaultfound = false;
+                        while (!reader.EndOfStream)
+                        {
+                            playerinfo = reader.ReadLine();
+                            string[] player_data = playerinfo.Split(',');
+                            if (player_data.Length != HighScoresFileFieldsCount)
+                            {
+                                fieldformatfaultfound = true;
+                            }
+                            if (player_data[0] == txt_UserName.Text)
+                            {
+                                player_found = true;
+                                try
+                                {
+                                    txt_HighScore.Text = player_data[2];
+                                    txt_TimesPlayed.Text = player_data[3];
+                                    txt_Deaths.Text = player_data[4];
+                                    txt_BulletsShot.Text = player_data[5];
+                                    txt_CloseCalls.Text = player_data[6];
+                                    txt_DeiExMachina.Text = player_data[7];
+                                }
+                                catch (IndexOutOfRangeException ex)
+                                {
+                                    fieldformatfaultfound = true;
+                                    Console.WriteLine(ex.Message);
+                                }
+                            }
+                        }
+                        if (fieldformatfaultfound)
+                        {
+                            MessageBox.Show("Possible Error in High Score File");
+                        }
+                        if (!player_found)
+                        {
+                            txt_HighScore.Text = 0 + "";
+                            txt_TimesPlayed.Text = 0 + "";
+                            txt_Deaths.Text = 0 + "";
+                            txt_BulletsShot.Text = 0 + "";
+                            txt_CloseCalls.Text = 0 + "";
+                            txt_DeiExMachina.Text = 0 + "";
+                        }
+                    }
+
+                }            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void frm_Menu_KeyDown(object sender, KeyEventArgs e)
+        {
+            //Ctrl+Alt+C activates Cheater menu
+            if(e.Control && e.Alt && e.KeyCode == Keys.C)
+            {
+                if (!Cheating)
+                {
+                    Cheating = true;
+                    pnl_CheatMenu.Visible = true;
+                    pnl_CheatMenu.Enabled = true;
+                }
+                else
+                {
+                    Cheating = false;
+                    pnl_CheatMenu.Visible = false;
+                    pnl_CheatMenu.Enabled = false;
+                }
+            }
+        }
+
+        private void btn_ExitGame_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void lb_AvailableCheats_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lb_AvailableCheats.SelectedItem != null)
+            {
+                lb_ActiveCheats.Items.Add(lb_AvailableCheats.SelectedItem);
+                lb_AvailableCheats.Items.Remove(lb_AvailableCheats.SelectedItem);
+            }
+
+        }
+
+        private void lb_ActiveCheats_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lb_ActiveCheats.SelectedItem != null)
+            {
+                lb_AvailableCheats.Items.Add(lb_ActiveCheats.SelectedItem);
+                lb_ActiveCheats.Items.Remove(lb_ActiveCheats.SelectedItem);
+            }
         }
     }
 }

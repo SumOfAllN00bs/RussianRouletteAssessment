@@ -19,7 +19,7 @@ namespace RussianRouletteAssessment
 
         private void frm_ScoreBoard_Load(object sender, EventArgs e)
         {
-            this.Text = "High Scores - Welcome " + frm_Intro.profile_Name;
+            this.Text = "High Scores - Welcome " + frm_PlayerProfile.profile_Name;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace RussianRouletteAssessment
 
         private void frm_Game_Load(object sender, EventArgs e)
         {
-            this.Text = "Russian Roulette - Welcome " + frm_Intro.profile_Name;
+            this.Text = "Russian Roulette - Welcome " + frm_PlayerProfile.profile_Name;
         }
     }
 }

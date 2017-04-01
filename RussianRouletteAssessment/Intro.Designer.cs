@@ -1,6 +1,6 @@
 ﻿namespace RussianRouletteAssessment
 {
-    partial class frm_Intro
+    partial class frm_PlayerProfile
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frm_Intro));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frm_PlayerProfile));
             this.lbl_Username = new System.Windows.Forms.Label();
             this.cb_UserName = new System.Windows.Forms.ComboBox();
             this.btn_Continue = new System.Windows.Forms.Button();
@@ -105,8 +105,9 @@
             this.cb_ProfilePictures.TabIndex = 7;
             this.cb_ProfilePictures.SelectedIndexChanged += new System.EventHandler(this.cb_ProfilePictures_SelectedIndexChanged);
             // 
-            // frm_Intro
+            // frm_PlayerProfile
             // 
+            this.AcceptButton = this.btn_Continue;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
@@ -121,7 +122,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "frm_Intro";
+            this.Name = "frm_PlayerProfile";
             this.Text = "Intro";
             this.Load += new System.EventHandler(this.frm_Intro_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pb_ProfilePic)).EndInit();
