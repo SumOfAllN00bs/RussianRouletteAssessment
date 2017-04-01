@@ -20,6 +20,8 @@ namespace RussianRouletteAssessment
     {
         //public variables for use in other parts of the program
 
+        //High score board
+        public static frm_ScoreBoard HighScores = new frm_ScoreBoard();
         //file name of scores database
         public static string HighScoresFilename = "scores.csv";
         //the number of fields used in the highscore records
@@ -55,10 +57,40 @@ namespace RussianRouletteAssessment
         //will be first thing player sees
         private frm_PlayerProfile PlayerProfile = new frm_PlayerProfile();
 
+        /// <summary>
+        /// Returns the index of byName which is the name associated with an embedded resource image
+        /// </summary>
+        /// <param name="byName"></param>
+        /// <returns>integer that represents the index into the ProfilePictures array</returns>
         public static int ProfilePicturesGetIndex(string byName)
         {
             //use lambda as predicate to extract from array
             return Array.FindIndex(ProfilePictures, (string[] x) => x[1] == byName); 
+        }
+        
+        //private functions
+
+        /// <summary>
+        /// Returns an array of strings each string being a cheat that was entered 
+        /// into the lb_ActiveCheats listbox.
+        /// </summary>
+        /// <returns>string []</returns>
+        private string [] CheatsFromListBox()
+        {
+            if (lb_ActiveCheats != null)
+            {
+                if (lb_ActiveCheats.Items.Count != 0)
+                {
+                    List<string> stringCollector = new List<string>();
+                    foreach (string cheat in lb_ActiveCheats.Items)
+                    {
+                        stringCollector.Add(cheat);
+                    }
+                    return stringCollector.ToArray();
+                }
+                else return new string[] { "" };
+            }
+            else return new string[] { "" };
         }
 
         public frm_Menu()
@@ -174,6 +206,25 @@ namespace RussianRouletteAssessment
             {
                 lb_AvailableCheats.Items.Add(lb_ActiveCheats.SelectedItem);
                 lb_ActiveCheats.Items.Remove(lb_ActiveCheats.SelectedItem);
+            }
+        }
+
+        private void btn_HighScores_Click(object sender, EventArgs e)
+        {
+            //only allow one instance of the highscore board
+            if (Application.OpenForms["frm_ScoreBoard"] == null)
+            {
+                if (Cheating)
+                {
+                    HighScores = new frm_ScoreBoard(CheatsFromListBox());
+                }
+                else HighScores = new frm_ScoreBoard();
+
+                HighScores.Show(); 
+            }
+            else
+            {
+                HighScores.Focus();
             }
         }
     }
