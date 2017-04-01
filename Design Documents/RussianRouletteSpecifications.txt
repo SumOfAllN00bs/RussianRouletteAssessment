@@ -1,0 +1,18 @@
+4 Forms:
+	1st form is the intro form where player enters name will be modal and only allows player to progress to game if they enter valid name
+	-	will load players scores if they have previous scores
+	-	name will be limited to 20 characters first one starts with alphanumeric and following will allow symbols (at sign, ampersand, spaces, etc...)
+	2nd form is the menu.
+	-	will contain: New game button, High scores button, Exit game button
+	-	Title screen graphics go here
+	-	secret cheat menu
+	-	on pressing c a textbox appears to enter cheats into.
+	3rd form is actual game will be modal to the menu.
+	-	on creation will set up game
+	-	will give player instructions on next step
+	-	will contain: Load bullet button, Spin chamber button, Fire button, and options to point the gun away (max 2 pull aways)//buttons may be replaced with graphical elements in final design
+	-	will use sound effects for each action
+	-	make the actual game form end on death or win with a end game screen with sound effects and an option to either exit or new game
+	4th form is the high score form will be non-modal and updates on every addition to the highscore board
+	-	there will be a cheat that allows editing the score board.
+	
