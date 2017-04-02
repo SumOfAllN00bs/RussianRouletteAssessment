@@ -18,12 +18,14 @@ namespace RussianRouletteAssessment
     {
         //public variables for use in other parts of the program
         public static string profile_Name;
-        public static string pic_Name;
+        public static string profile_Pic_Name;
         public static Image profile_Pic;
 
         //private variables
-        private Assembly assembly;
-        private Stream imagestream;
+        private static frm_PlayerProfile me;
+        private static Assembly assembly;
+        private static Stream imagestream;
+        private bool firstRun = true;
         private List<string> UserProfiles = new List<string>();
 
         //private methods
@@ -44,14 +46,25 @@ namespace RussianRouletteAssessment
             set_PictureBox_To_Profile_Picture(frm_Menu.ProfilePicturesGetIndex(byName));
         }
 
+        //public methods
+
+        /// <summary>
+        /// Used to update the stored picture if edited from highscore board
+        /// </summary>
+        public static void UpdatePic(string NewPicName)
+        {
+            if (assembly == null || me == null) //just in case
+            {
+                return;
+            }
+            profile_Pic_Name = NewPicName;
+            imagestream = assembly.GetManifestResourceStream(frm_Menu.ProfilePictures[frm_Menu.ProfilePicturesGetIndex(NewPicName)][0]);
+            profile_Pic = new Bitmap(imagestream);
+        }
+
         public frm_PlayerProfile()
         {
             InitializeComponent();
-        }
-
-        private void frm_Intro_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void btn_Continue_Click(object sender, EventArgs e)
@@ -73,8 +86,9 @@ namespace RussianRouletteAssessment
 
         private void cb_ProfilePictures_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //instantly change picture box to selected picture
             set_PictureBox_To_Profile_Picture(cb_ProfilePictures.SelectedItem.ToString());
-            pic_Name = cb_ProfilePictures.SelectedItem.ToString();
+            profile_Pic_Name = cb_ProfilePictures.SelectedItem.ToString();
         }
 
         private void cb_UserName_SelectedIndexChanged(object sender, EventArgs e)
@@ -89,7 +103,7 @@ namespace RussianRouletteAssessment
                     {
                         set_PictureBox_To_Profile_Picture(tmpArray[1]);
                         cb_ProfilePictures.SelectedItem = tmpArray[1];
-                        pic_Name = tmpArray[1];
+                        profile_Pic_Name = tmpArray[1];
                     }
                 }
             }
@@ -99,6 +113,7 @@ namespace RussianRouletteAssessment
         {
             try
             {
+                me = this;
                 //Grab the assembly our form belongs to
                 assembly = Assembly.GetExecutingAssembly();
 
@@ -126,9 +141,15 @@ namespace RussianRouletteAssessment
                     cb_ProfilePictures.Items.Add(frm_Menu.ProfilePictures[i][1]);
                 }
 
-                //Load the Picture box with the first Profile picture as a default
-                //select the first item which will call set_PictureBox_To_Profile_Picture
-                cb_ProfilePictures.SelectedIndex = 0;
+                //stop running so as to load the current selected picture when we 
+                //click on New User from main form
+                if (firstRun)
+                {
+                    //Load the Picture box with the first Profile picture as a default
+                    //select the first item which will call set_PictureBox_To_Profile_Picture
+                    cb_ProfilePictures.SelectedIndex = 0;
+                    firstRun = false;
+                }
             }
             catch (Exception ex)
             {

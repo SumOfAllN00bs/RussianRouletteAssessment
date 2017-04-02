@@ -117,6 +117,8 @@ namespace RussianRouletteAssessment
                                     txt_BulletsShot.Text = player_data[5];
                                     txt_CloseCalls.Text = player_data[6];
                                     txt_DeiExMachina.Text = player_data[7];
+                                    frm_PlayerProfile.UpdatePic(player_data[1]);
+                                    pb_ProfilePic.Image = frm_PlayerProfile.profile_Pic;
                                 }
                                 catch (IndexOutOfRangeException ex)
                                 {
@@ -174,7 +176,6 @@ namespace RussianRouletteAssessment
         private void NewPlayer()
         {
             PlayerProfile.ShowDialog();
-            pb_ProfilePic.Image = frm_PlayerProfile.profile_Pic;
             this.Text = "Main Menu - Welcome " + frm_PlayerProfile.profile_Name;
             txt_UserName.Text = frm_PlayerProfile.profile_Name;
             SetMyProfileStats();
