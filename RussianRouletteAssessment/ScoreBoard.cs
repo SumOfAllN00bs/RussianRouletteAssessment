@@ -53,6 +53,7 @@ namespace RussianRouletteAssessment
                             break;
                         case "Edit All":
                             dgv_HighScores.Columns["UserName"].ReadOnly = false;
+                            dgv_HighScores.Columns["ProfilePic"].ReadOnly = false;
                             dgv_HighScores.Columns["HighScore"].ReadOnly = false;
                             dgv_HighScores.Columns["TimesPlayed"].ReadOnly = false;
                             dgv_HighScores.Columns["BulletsFired"].ReadOnly = false;
@@ -76,17 +77,34 @@ namespace RussianRouletteAssessment
             }
 
             using (StreamReader reader = new StreamReader(frm_Menu.HighScoresFilename))
-            { 
+            {
+                //need to create array of names before its used in the while loop
+                //to fill combobox in gridview
+                string[] ProfileNames = new string [25];
+                for (int i = 0; i < 25; i++)
+                {
+                    ProfileNames[i] = frm_Menu.ProfilePictures[i][1];
+                }
+                /*
+                 * The following code was really hard to learn how it works
+                 * and took 2-3 days research to get right
+                 */
                 while (!reader.EndOfStream)
                 {
                     string [] player_info = reader.ReadLine().Split(',');
-                    dgv_HighScores.Rows.Add(new string[] { player_info[0],  //username
-                                                            player_info[2], //score
-                                                            player_info[3], //times played
-                                                            player_info[4], //deaths
-                                                            player_info[5], //shots fired
-                                                            player_info[6], //close calls
-                                                            player_info[7] }); //dei ex machina
+                    DataGridViewComboBoxCell ProfilePics = new DataGridViewComboBoxCell();
+                    ProfilePics.Items.AddRange(ProfileNames);
+                    ProfilePics.Value = player_info[1];
+                    DataGridViewRow PlayerInfoRow = new DataGridViewRow();
+                    PlayerInfoRow.Cells.Add(new DataGridViewTextBoxCell() { Value = player_info[0] });  //username
+                    PlayerInfoRow.Cells.Add(ProfilePics);                                               //profile pic is combobox
+                    PlayerInfoRow.Cells.Add(new DataGridViewTextBoxCell() { Value = player_info[2] });  //score
+                    PlayerInfoRow.Cells.Add(new DataGridViewTextBoxCell() { Value = player_info[3] });  //times played
+                    PlayerInfoRow.Cells.Add(new DataGridViewTextBoxCell() { Value = player_info[4] });  //deaths
+                    PlayerInfoRow.Cells.Add(new DataGridViewTextBoxCell() { Value = player_info[5] });  //shots fired
+                    PlayerInfoRow.Cells.Add(new DataGridViewTextBoxCell() { Value = player_info[6] });  //close calls
+                    PlayerInfoRow.Cells.Add(new DataGridViewTextBoxCell() { Value = player_info[7] });  //dei ex machina
+                    dgv_HighScores.Rows.Add(PlayerInfoRow);
                 }
             }
         }
@@ -113,11 +131,19 @@ namespace RussianRouletteAssessment
         {
             using (StreamWriter writer = new StreamWriter(frm_Menu.HighScoresFilename))
             {
-                for (int record = 0; record < dgv_HighScores; record++)
+                for (int record = 0; record < dgv_HighScores.Rows.Count; record++)
                 {
-
+                    StringBuilder recordstring = new StringBuilder();
+                    for (int data = 0; data < dgv_HighScores.Columns.Count; data++)
+                    {
+                        recordstring.Append(dgv_HighScores.Rows[record].Cells[data].Value.ToString()+ ",");
+                    }
+                    recordstring.Remove(recordstring.Length - 1, 1);
+                    writer.WriteLine(recordstring.ToString());
                 }
             }
+            //update the Main form
+            frm_Menu.SetProfileStats();
         }
     }
 }

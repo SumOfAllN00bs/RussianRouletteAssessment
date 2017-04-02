@@ -32,20 +32,22 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frm_ScoreBoard));
             this.dgv_HighScores = new System.Windows.Forms.DataGridView();
+            this.btn_Save = new System.Windows.Forms.Button();
             this.UserName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ProfilePic = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.HighScore = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TimesPlayed = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Deaths = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BulletsFired = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CloseCalls = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeiExMachina = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btn_Save = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_HighScores)).BeginInit();
             this.SuspendLayout();
             // 
             // dgv_HighScores
             // 
             this.dgv_HighScores.AllowUserToAddRows = false;
+            this.dgv_HighScores.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             this.dgv_HighScores.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
@@ -55,6 +57,7 @@
             this.dgv_HighScores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_HighScores.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.UserName,
+            this.ProfilePic,
             this.HighScore,
             this.TimesPlayed,
             this.Deaths,
@@ -69,15 +72,36 @@
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.Info;
             this.dgv_HighScores.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.dgv_HighScores.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_HighScores.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dgv_HighScores.Size = new System.Drawing.Size(600, 393);
             this.dgv_HighScores.TabIndex = 0;
             this.dgv_HighScores.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_HighScores_EditingControlShowing);
+            // 
+            // btn_Save
+            // 
+            this.btn_Save.Location = new System.Drawing.Point(537, 411);
+            this.btn_Save.Name = "btn_Save";
+            this.btn_Save.Size = new System.Drawing.Size(75, 23);
+            this.btn_Save.TabIndex = 1;
+            this.btn_Save.Text = "Save";
+            this.btn_Save.UseVisualStyleBackColor = true;
+            this.btn_Save.Visible = false;
+            this.btn_Save.Click += new System.EventHandler(this.btn_Save_Click);
             // 
             // UserName
             // 
             this.UserName.HeaderText = "User Name";
             this.UserName.Name = "UserName";
             this.UserName.ReadOnly = true;
+            // 
+            // ProfilePic
+            // 
+            this.ProfilePic.HeaderText = "Profile Pic";
+            this.ProfilePic.Name = "ProfilePic";
+            this.ProfilePic.ReadOnly = true;
+            this.ProfilePic.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.ProfilePic.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // HighScore
             // 
@@ -127,17 +151,6 @@
             this.DeiExMachina.Name = "DeiExMachina";
             this.DeiExMachina.ReadOnly = true;
             // 
-            // btn_Save
-            // 
-            this.btn_Save.Location = new System.Drawing.Point(537, 411);
-            this.btn_Save.Name = "btn_Save";
-            this.btn_Save.Size = new System.Drawing.Size(75, 23);
-            this.btn_Save.TabIndex = 1;
-            this.btn_Save.Text = "Save";
-            this.btn_Save.UseVisualStyleBackColor = true;
-            this.btn_Save.Visible = false;
-            this.btn_Save.Click += new System.EventHandler(this.btn_Save_Click);
-            // 
             // frm_ScoreBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -159,13 +172,14 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dgv_HighScores;
+        private System.Windows.Forms.Button btn_Save;
         private System.Windows.Forms.DataGridViewTextBoxColumn UserName;
+        private System.Windows.Forms.DataGridViewComboBoxColumn ProfilePic;
         private System.Windows.Forms.DataGridViewTextBoxColumn HighScore;
         private System.Windows.Forms.DataGridViewTextBoxColumn TimesPlayed;
         private System.Windows.Forms.DataGridViewTextBoxColumn Deaths;
         private System.Windows.Forms.DataGridViewTextBoxColumn BulletsFired;
         private System.Windows.Forms.DataGridViewTextBoxColumn CloseCalls;
         private System.Windows.Forms.DataGridViewTextBoxColumn DeiExMachina;
-        private System.Windows.Forms.Button btn_Save;
     }
 }

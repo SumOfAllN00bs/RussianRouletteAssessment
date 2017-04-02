@@ -56,6 +56,10 @@ namespace RussianRouletteAssessment
         private bool Cheating = false;
         //will be first thing player sees
         private frm_PlayerProfile PlayerProfile = new frm_PlayerProfile();
+        //hold a copy of itself
+        private static frm_Menu me = null;
+
+        //public functions
 
         /// <summary>
         /// Returns the index of byName which is the name associated with an embedded resource image
@@ -67,46 +71,24 @@ namespace RussianRouletteAssessment
             //use lambda as predicate to extract from array
             return Array.FindIndex(ProfilePictures, (string[] x) => x[1] == byName); 
         }
-        
-        //private functions
 
         /// <summary>
-        /// Returns an array of strings each string being a cheat that was entered 
-        /// into the lb_ActiveCheats listbox.
+        /// To allow a form that edits the score board to update the main form
+        /// I create a static method that will call a non-static method on a reference to the form
         /// </summary>
-        /// <returns>string []</returns>
-        private string [] CheatsFromListBox()
+        public static void SetProfileStats()
         {
-            if (lb_ActiveCheats != null)
+            if (me == null)
             {
-                if (lb_ActiveCheats.Items.Count != 0)
-                {
-                    List<string> stringCollector = new List<string>();
-                    foreach (string cheat in lb_ActiveCheats.Items)
-                    {
-                        stringCollector.Add(cheat);
-                    }
-                    return stringCollector.ToArray();
-                }
-                else return new string[] { "" };
+                return;
             }
-            else return new string[] { "" };
+            me.SetMyProfileStats();
         }
+        
+        //private utility functions functions
 
-        public frm_Menu()
+        private void SetMyProfileStats()
         {
-            InitializeComponent();
-        }
-
-        private void frm_Menu_Load(object sender, EventArgs e)
-        {
-
-            this.KeyPreview = true;
-            //Get the player to either fill in a new profile or load one from stored in the highscores data base
-            PlayerProfile.ShowDialog();
-            pb_ProfilePic.Image = frm_PlayerProfile.profile_Pic;
-            this.Text = "Main Menu - Welcome " + frm_PlayerProfile.profile_Name;
-            txt_UserName.Text = frm_PlayerProfile.profile_Name;
             try
             {
                 if (File.Exists(HighScoresFilename))
@@ -155,14 +137,60 @@ namespace RussianRouletteAssessment
                             txt_BulletsShot.Text = 0 + "";
                             txt_CloseCalls.Text = 0 + "";
                             txt_DeiExMachina.Text = 0 + "";
+
                         }
                     }
 
-                }            }
+                }
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+        }
+        /// <summary>
+        /// Returns an array of strings each string being a cheat that was entered 
+        /// into the lb_ActiveCheats listbox.
+        /// </summary>
+        /// <returns>string []</returns>
+        private string [] CheatsFromListBox()
+        {
+            if (lb_ActiveCheats != null)
+            {
+                if (lb_ActiveCheats.Items.Count != 0)
+                {
+                    List<string> stringCollector = new List<string>();
+                    foreach (string cheat in lb_ActiveCheats.Items)
+                    {
+                        stringCollector.Add(cheat);
+                    }
+                    return stringCollector.ToArray();
+                }
+                else return new string[] { "" };
+            }
+            else return new string[] { "" };
+        }
+
+        private void NewPlayer()
+        {
+            PlayerProfile.ShowDialog();
+            pb_ProfilePic.Image = frm_PlayerProfile.profile_Pic;
+            this.Text = "Main Menu - Welcome " + frm_PlayerProfile.profile_Name;
+            txt_UserName.Text = frm_PlayerProfile.profile_Name;
+            SetMyProfileStats();
+        }
+
+        public frm_Menu()
+        {
+            InitializeComponent();
+        }
+
+        private void frm_Menu_Load(object sender, EventArgs e)
+        {
+            me = this;
+            this.KeyPreview = true;
+            //Get the player to either fill in a new profile or load one from stored in the highscores data base
+            NewPlayer();
         }
 
         private void frm_Menu_KeyDown(object sender, KeyEventArgs e)
@@ -226,6 +254,11 @@ namespace RussianRouletteAssessment
             {
                 HighScores.Focus();
             }
+        }
+
+        private void btn_NewPlayer_Click(object sender, EventArgs e)
+        {
+            NewPlayer();
         }
     }
 }

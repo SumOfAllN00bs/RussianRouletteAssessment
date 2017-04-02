@@ -53,6 +53,8 @@
             this.lbl_AvailableCheats = new System.Windows.Forms.Label();
             this.lb_ActiveCheats = new System.Windows.Forms.ListBox();
             this.btn_HighScores = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btn_NewPlayer = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ProfilePic)).BeginInit();
             this.pnl_CheatMenu.SuspendLayout();
             this.SuspendLayout();
@@ -68,7 +70,7 @@
             // 
             // btn_ExitGame
             // 
-            this.btn_ExitGame.Location = new System.Drawing.Point(536, 406);
+            this.btn_ExitGame.Location = new System.Drawing.Point(534, 406);
             this.btn_ExitGame.Name = "btn_ExitGame";
             this.btn_ExitGame.Size = new System.Drawing.Size(75, 23);
             this.btn_ExitGame.TabIndex = 1;
@@ -207,6 +209,7 @@
             // pnl_CheatMenu
             // 
             this.pnl_CheatMenu.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnl_CheatMenu.Controls.Add(this.label1);
             this.pnl_CheatMenu.Controls.Add(this.lbl_MoveCheats);
             this.pnl_CheatMenu.Controls.Add(this.label2);
             this.pnl_CheatMenu.Controls.Add(this.lb_AvailableCheats);
@@ -222,7 +225,7 @@
             // lbl_MoveCheats
             // 
             this.lbl_MoveCheats.AutoSize = true;
-            this.lbl_MoveCheats.Location = new System.Drawing.Point(297, 53);
+            this.lbl_MoveCheats.Location = new System.Drawing.Point(298, 39);
             this.lbl_MoveCheats.Name = "lbl_MoveCheats";
             this.lbl_MoveCheats.Size = new System.Drawing.Size(94, 13);
             this.lbl_MoveCheats.TabIndex = 6;
@@ -231,7 +234,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(340, 7);
+            this.label2.Location = new System.Drawing.Point(410, 7);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 13);
             this.label2.TabIndex = 5;
@@ -248,7 +251,7 @@
             "God Mode"});
             this.lb_AvailableCheats.Location = new System.Drawing.Point(95, 3);
             this.lb_AvailableCheats.Name = "lb_AvailableCheats";
-            this.lb_AvailableCheats.Size = new System.Drawing.Size(176, 108);
+            this.lb_AvailableCheats.Size = new System.Drawing.Size(106, 95);
             this.lb_AvailableCheats.Sorted = true;
             this.lb_AvailableCheats.TabIndex = 4;
             this.lb_AvailableCheats.SelectedIndexChanged += new System.EventHandler(this.lb_AvailableCheats_SelectedIndexChanged);
@@ -265,16 +268,16 @@
             // lb_ActiveCheats
             // 
             this.lb_ActiveCheats.FormattingEnabled = true;
-            this.lb_ActiveCheats.Location = new System.Drawing.Point(418, 3);
+            this.lb_ActiveCheats.Location = new System.Drawing.Point(489, 3);
             this.lb_ActiveCheats.Name = "lb_ActiveCheats";
-            this.lb_ActiveCheats.Size = new System.Drawing.Size(176, 108);
+            this.lb_ActiveCheats.Size = new System.Drawing.Size(106, 95);
             this.lb_ActiveCheats.Sorted = true;
             this.lb_ActiveCheats.TabIndex = 0;
             this.lb_ActiveCheats.SelectedIndexChanged += new System.EventHandler(this.lb_ActiveCheats_SelectedIndexChanged);
             // 
             // btn_HighScores
             // 
-            this.btn_HighScores.Location = new System.Drawing.Point(274, 406);
+            this.btn_HighScores.Location = new System.Drawing.Point(360, 406);
             this.btn_HighScores.Name = "btn_HighScores";
             this.btn_HighScores.Size = new System.Drawing.Size(75, 23);
             this.btn_HighScores.TabIndex = 22;
@@ -282,12 +285,32 @@
             this.btn_HighScores.UseVisualStyleBackColor = true;
             this.btn_HighScores.Click += new System.EventHandler(this.btn_HighScores_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(222, 98);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(246, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Cheats will only be in effect if this window is visible.";
+            // 
+            // btn_NewPlayer
+            // 
+            this.btn_NewPlayer.Location = new System.Drawing.Point(186, 406);
+            this.btn_NewPlayer.Name = "btn_NewPlayer";
+            this.btn_NewPlayer.Size = new System.Drawing.Size(75, 23);
+            this.btn_NewPlayer.TabIndex = 23;
+            this.btn_NewPlayer.Text = "New Player";
+            this.btn_NewPlayer.UseVisualStyleBackColor = true;
+            this.btn_NewPlayer.Click += new System.EventHandler(this.btn_NewPlayer_Click);
+            // 
             // frm_Menu
             // 
             this.AcceptButton = this.btn_NewGame;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
+            this.Controls.Add(this.btn_NewPlayer);
             this.Controls.Add(this.btn_HighScores);
             this.Controls.Add(this.pnl_CheatMenu);
             this.Controls.Add(this.txt_HighScore);
@@ -348,6 +371,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListBox lb_AvailableCheats;
         private System.Windows.Forms.Button btn_HighScores;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btn_NewPlayer;
     }
 }
 

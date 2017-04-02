@@ -51,43 +51,7 @@ namespace RussianRouletteAssessment
 
         private void frm_Intro_Load(object sender, EventArgs e)
         {
-            try
-            {
-                //Grab the assembly our form belongs to
-                assembly = Assembly.GetExecutingAssembly();
 
-                //Check if scores exist and load user names from score board
-                if (File.Exists(frm_Menu.HighScoresFilename))
-                {
-                    using (StreamReader reader = new StreamReader(frm_Menu.HighScoresFilename))
-                    {
-                        UserProfiles.Clear();
-                        UserProfiles.Add("");
-                        while (!reader.EndOfStream)
-                        {
-                            UserProfiles.Add(reader.ReadLine().Split(',')[0]);
-                        }
-                        //List<string> tmpList = UserProfiles.Distinct().ToList();
-                        //UserProfiles = tmpList;
-                    }
-                    cb_UserName.DataSource = UserProfiles;
-                }
-
-                //Load Combo box with the Profile Picture Options
-                cb_ProfilePictures.Items.Clear();
-                for (int i = 0; i < 25; i++)
-                {
-                    cb_ProfilePictures.Items.Add(frm_Menu.ProfilePictures[i][1]);
-                }
-
-                //Load the Picture box with the first Profile picture as a default
-                //select the first item which will call set_PictureBox_To_Profile_Picture
-                cb_ProfilePictures.SelectedIndex = 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
         }
 
         private void btn_Continue_Click(object sender, EventArgs e)
@@ -128,6 +92,47 @@ namespace RussianRouletteAssessment
                         pic_Name = tmpArray[1];
                     }
                 }
+            }
+        }
+
+        private void frm_PlayerProfile_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                //Grab the assembly our form belongs to
+                assembly = Assembly.GetExecutingAssembly();
+
+                //Check if scores exist and load user names from score board
+                if (File.Exists(frm_Menu.HighScoresFilename))
+                {
+                    using (StreamReader reader = new StreamReader(frm_Menu.HighScoresFilename))
+                    {
+                        UserProfiles.Clear();
+                        UserProfiles.Add("");
+                        while (!reader.EndOfStream)
+                        {
+                            UserProfiles.Add(reader.ReadLine().Split(',')[0]);
+                        }
+                        //List<string> tmpList = UserProfiles.Distinct().ToList();
+                        //UserProfiles = tmpList;
+                    }
+                    cb_UserName.DataSource = UserProfiles;
+                }
+
+                //Load Combo box with the Profile Picture Options
+                cb_ProfilePictures.Items.Clear();
+                for (int i = 0; i < 25; i++)
+                {
+                    cb_ProfilePictures.Items.Add(frm_Menu.ProfilePictures[i][1]);
+                }
+
+                //Load the Picture box with the first Profile picture as a default
+                //select the first item which will call set_PictureBox_To_Profile_Picture
+                cb_ProfilePictures.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
             }
         }
     }

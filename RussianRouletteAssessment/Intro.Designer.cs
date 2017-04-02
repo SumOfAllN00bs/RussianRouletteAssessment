@@ -124,7 +124,7 @@
             this.MaximizeBox = false;
             this.Name = "frm_PlayerProfile";
             this.Text = "Intro";
-            this.Load += new System.EventHandler(this.frm_Intro_Load);
+            this.Load += new System.EventHandler(this.frm_PlayerProfile_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pb_ProfilePic)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
