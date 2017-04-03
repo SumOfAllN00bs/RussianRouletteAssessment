@@ -64,16 +64,17 @@
             this.btn_NewGame.Location = new System.Drawing.Point(12, 406);
             this.btn_NewGame.Name = "btn_NewGame";
             this.btn_NewGame.Size = new System.Drawing.Size(75, 23);
-            this.btn_NewGame.TabIndex = 0;
+            this.btn_NewGame.TabIndex = 7;
             this.btn_NewGame.Text = "New Game";
             this.btn_NewGame.UseVisualStyleBackColor = true;
+            this.btn_NewGame.Click += new System.EventHandler(this.btn_NewGame_Click);
             // 
             // btn_ExitGame
             // 
             this.btn_ExitGame.Location = new System.Drawing.Point(534, 406);
             this.btn_ExitGame.Name = "btn_ExitGame";
             this.btn_ExitGame.Size = new System.Drawing.Size(75, 23);
-            this.btn_ExitGame.TabIndex = 1;
+            this.btn_ExitGame.TabIndex = 11;
             this.btn_ExitGame.Text = "Exit Game";
             this.btn_ExitGame.UseVisualStyleBackColor = true;
             this.btn_ExitGame.Click += new System.EventHandler(this.btn_ExitGame_Click);
@@ -156,7 +157,7 @@
             this.txt_UserName.Name = "txt_UserName";
             this.txt_UserName.ReadOnly = true;
             this.txt_UserName.Size = new System.Drawing.Size(236, 20);
-            this.txt_UserName.TabIndex = 14;
+            this.txt_UserName.TabIndex = 0;
             // 
             // txt_DeiExMachina
             // 
@@ -164,7 +165,7 @@
             this.txt_DeiExMachina.Name = "txt_DeiExMachina";
             this.txt_DeiExMachina.ReadOnly = true;
             this.txt_DeiExMachina.Size = new System.Drawing.Size(236, 20);
-            this.txt_DeiExMachina.TabIndex = 15;
+            this.txt_DeiExMachina.TabIndex = 6;
             // 
             // txt_CloseCalls
             // 
@@ -172,7 +173,7 @@
             this.txt_CloseCalls.Name = "txt_CloseCalls";
             this.txt_CloseCalls.ReadOnly = true;
             this.txt_CloseCalls.Size = new System.Drawing.Size(236, 20);
-            this.txt_CloseCalls.TabIndex = 16;
+            this.txt_CloseCalls.TabIndex = 5;
             // 
             // txt_BulletsShot
             // 
@@ -180,7 +181,7 @@
             this.txt_BulletsShot.Name = "txt_BulletsShot";
             this.txt_BulletsShot.ReadOnly = true;
             this.txt_BulletsShot.Size = new System.Drawing.Size(236, 20);
-            this.txt_BulletsShot.TabIndex = 17;
+            this.txt_BulletsShot.TabIndex = 4;
             // 
             // txt_Deaths
             // 
@@ -188,7 +189,7 @@
             this.txt_Deaths.Name = "txt_Deaths";
             this.txt_Deaths.ReadOnly = true;
             this.txt_Deaths.Size = new System.Drawing.Size(236, 20);
-            this.txt_Deaths.TabIndex = 18;
+            this.txt_Deaths.TabIndex = 3;
             // 
             // txt_TimesPlayed
             // 
@@ -196,7 +197,7 @@
             this.txt_TimesPlayed.Name = "txt_TimesPlayed";
             this.txt_TimesPlayed.ReadOnly = true;
             this.txt_TimesPlayed.Size = new System.Drawing.Size(236, 20);
-            this.txt_TimesPlayed.TabIndex = 19;
+            this.txt_TimesPlayed.TabIndex = 2;
             // 
             // txt_HighScore
             // 
@@ -204,7 +205,7 @@
             this.txt_HighScore.Name = "txt_HighScore";
             this.txt_HighScore.ReadOnly = true;
             this.txt_HighScore.Size = new System.Drawing.Size(236, 20);
-            this.txt_HighScore.TabIndex = 20;
+            this.txt_HighScore.TabIndex = 1;
             // 
             // pnl_CheatMenu
             // 
@@ -253,7 +254,7 @@
             this.lb_AvailableCheats.Name = "lb_AvailableCheats";
             this.lb_AvailableCheats.Size = new System.Drawing.Size(106, 95);
             this.lb_AvailableCheats.Sorted = true;
-            this.lb_AvailableCheats.TabIndex = 4;
+            this.lb_AvailableCheats.TabIndex = 10;
             this.lb_AvailableCheats.SelectedIndexChanged += new System.EventHandler(this.lb_AvailableCheats_SelectedIndexChanged);
             // 
             // lbl_AvailableCheats
@@ -272,7 +273,7 @@
             this.lb_ActiveCheats.Name = "lb_ActiveCheats";
             this.lb_ActiveCheats.Size = new System.Drawing.Size(106, 95);
             this.lb_ActiveCheats.Sorted = true;
-            this.lb_ActiveCheats.TabIndex = 0;
+            this.lb_ActiveCheats.TabIndex = 11;
             this.lb_ActiveCheats.SelectedIndexChanged += new System.EventHandler(this.lb_ActiveCheats_SelectedIndexChanged);
             // 
             // btn_HighScores
@@ -280,7 +281,7 @@
             this.btn_HighScores.Location = new System.Drawing.Point(360, 406);
             this.btn_HighScores.Name = "btn_HighScores";
             this.btn_HighScores.Size = new System.Drawing.Size(75, 23);
-            this.btn_HighScores.TabIndex = 22;
+            this.btn_HighScores.TabIndex = 9;
             this.btn_HighScores.Text = "High Scores";
             this.btn_HighScores.UseVisualStyleBackColor = true;
             this.btn_HighScores.Click += new System.EventHandler(this.btn_HighScores_Click);
@@ -299,7 +300,7 @@
             this.btn_NewPlayer.Location = new System.Drawing.Point(186, 406);
             this.btn_NewPlayer.Name = "btn_NewPlayer";
             this.btn_NewPlayer.Size = new System.Drawing.Size(75, 23);
-            this.btn_NewPlayer.TabIndex = 23;
+            this.btn_NewPlayer.TabIndex = 8;
             this.btn_NewPlayer.Text = "New Player";
             this.btn_NewPlayer.UseVisualStyleBackColor = true;
             this.btn_NewPlayer.Click += new System.EventHandler(this.btn_NewPlayer_Click);

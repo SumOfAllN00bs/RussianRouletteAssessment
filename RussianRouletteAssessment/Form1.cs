@@ -14,6 +14,7 @@ using System.Windows.Forms;
  * It will launch the Profile selection screen
  * It will handle new games and exiting of the game
  */
+ //todo:Animate Opacity of non-main forms when loading to fade in over a half second
 namespace RussianRouletteAssessment
 {
     public partial class frm_Menu : Form
@@ -58,6 +59,8 @@ namespace RussianRouletteAssessment
         private frm_PlayerProfile PlayerProfile = new frm_PlayerProfile();
         //hold a copy of itself
         private static frm_Menu me = null;
+        //The Game Form
+        private frm_Game Game = new frm_Game();
 
         //public functions
 
@@ -118,7 +121,7 @@ namespace RussianRouletteAssessment
                                     txt_CloseCalls.Text = player_data[6];
                                     txt_DeiExMachina.Text = player_data[7];
                                     frm_PlayerProfile.UpdatePic(player_data[1]);
-                                    pb_ProfilePic.Image = frm_PlayerProfile.profile_Pic;
+                                    pb_ProfilePic.Image = frm_PlayerProfile.profilePic;
                                 }
                                 catch (IndexOutOfRangeException ex)
                                 {
@@ -176,8 +179,8 @@ namespace RussianRouletteAssessment
         private void NewPlayer()
         {
             PlayerProfile.ShowDialog();
-            this.Text = "Main Menu - Welcome " + frm_PlayerProfile.profile_Name;
-            txt_UserName.Text = frm_PlayerProfile.profile_Name;
+            this.Text = "Main Menu - Welcome " + frm_PlayerProfile.profileName;
+            txt_UserName.Text = frm_PlayerProfile.profileName;
             SetMyProfileStats();
         }
 
@@ -260,6 +263,13 @@ namespace RussianRouletteAssessment
         private void btn_NewPlayer_Click(object sender, EventArgs e)
         {
             NewPlayer();
+        }
+
+        private void btn_NewGame_Click(object sender, EventArgs e)
+        {
+            //run game
+            //In modal mode so we don't get confused by multiple high scores and player profiles
+            Game.ShowDialog();
         }
     }
 }

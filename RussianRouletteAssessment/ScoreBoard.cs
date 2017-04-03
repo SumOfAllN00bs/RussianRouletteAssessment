@@ -69,7 +69,7 @@ namespace RussianRouletteAssessment
                 }
             }
 
-            this.Text = "High Scores - Welcome " + frm_PlayerProfile.profile_Name;
+            this.Text = "High Scores - Welcome " + frm_PlayerProfile.profileName;
             if (!File.Exists(frm_Menu.HighScoresFilename))
             {
                 MessageBox.Show("Error: High Scores file not found: " + frm_Menu.HighScoresFilename + ".\r\n Creating new High Scores file");
@@ -111,7 +111,6 @@ namespace RussianRouletteAssessment
 
         private void dgv_HighScores_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            //some code copy pasted from http://stackoverflow.com/questions/12645458/make-a-specific-column-only-accept-numeric-value-in-datagridview-in-keypress-eve
             e.Control.KeyPress -= new KeyPressEventHandler(HighScore_Column_KeyPress);
 
             if (dgv_HighScores.CurrentCell.ColumnIndex >= dgv_HighScores.Columns["HighScore"].Index)

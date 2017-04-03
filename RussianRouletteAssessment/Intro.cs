@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,19 +18,20 @@ namespace RussianRouletteAssessment
     public partial class frm_PlayerProfile : Form
     {
         //public variables for use in other parts of the program
-        public static string profile_Name;
-        public static string profile_Pic_Name;
-        public static Image profile_Pic;
+        public static string profileName;
+        public static string profilePicName;
+        public static Image profilePic;
 
         //private variables
         private static frm_PlayerProfile me;
         private static Assembly assembly;
         private static Stream imagestream;
         private bool firstRun = true;
+        private bool playerProfileSelectedFromList = false;
         private List<string> UserProfiles = new List<string>();
 
         //private methods
-        private void set_PictureBox_To_Profile_Picture(int index)
+        private void setPictureBoxToProfilePicture(int index)
         {
             if (assembly == null) //just in case
             {
@@ -37,13 +39,13 @@ namespace RussianRouletteAssessment
             }
             imagestream = assembly.GetManifestResourceStream(frm_Menu.ProfilePictures[index][0]);
             pb_ProfilePic.Image = new Bitmap(imagestream);
-            profile_Pic = pb_ProfilePic.Image;
+            profilePic = pb_ProfilePic.Image;
         }
         //overloaded
-        private void set_PictureBox_To_Profile_Picture(string byName)
+        private void setPictureBoxToProfilePicture(string byName)
         {
             //calls its other version so we don't have duplicate code
-            set_PictureBox_To_Profile_Picture(frm_Menu.ProfilePicturesGetIndex(byName));
+            setPictureBoxToProfilePicture(frm_Menu.ProfilePicturesGetIndex(byName));
         }
 
         //public methods
@@ -57,9 +59,9 @@ namespace RussianRouletteAssessment
             {
                 return;
             }
-            profile_Pic_Name = NewPicName;
+            profilePicName = NewPicName;
             imagestream = assembly.GetManifestResourceStream(frm_Menu.ProfilePictures[frm_Menu.ProfilePicturesGetIndex(NewPicName)][0]);
-            profile_Pic = new Bitmap(imagestream);
+            profilePic = new Bitmap(imagestream);
         }
 
         public frm_PlayerProfile()
@@ -74,7 +76,15 @@ namespace RussianRouletteAssessment
             {
                 return;
             }
-            profile_Name = cb_UserName.Text;
+            profileName = cb_UserName.Text;
+            UpdatePic(cb_ProfilePictures.SelectedItem.ToString());
+            if (playerProfileSelectedFromList)
+            {
+                string scorefile = File.ReadAllText(frm_Menu.HighScoresFilename);
+                scorefile = Regex.Replace(scorefile, profileName + "," + "[^,]*", profileName + "," + profilePicName);
+                File.WriteAllText(frm_Menu.HighScoresFilename, scorefile);
+                playerProfileSelectedFromList = false;
+            }
 
             this.Close();
         }
@@ -86,24 +96,26 @@ namespace RussianRouletteAssessment
 
         private void cb_ProfilePictures_SelectedIndexChanged(object sender, EventArgs e)
         {
+
             //instantly change picture box to selected picture
-            set_PictureBox_To_Profile_Picture(cb_ProfilePictures.SelectedItem.ToString());
-            profile_Pic_Name = cb_ProfilePictures.SelectedItem.ToString();
+            setPictureBoxToProfilePicture(cb_ProfilePictures.SelectedItem.ToString());
+            profilePicName = cb_ProfilePictures.SelectedItem.ToString();
         }
 
         private void cb_UserName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            profile_Name = cb_UserName.Text;
+            profileName = cb_UserName.Text;
             using (StreamReader reader = new StreamReader(frm_Menu.HighScoresFilename))
             {
                 while (!reader.EndOfStream)
                 {
                     string[] tmpArray = reader.ReadLine().Split(',');
-                    if (tmpArray[0] == profile_Name)
+                    if (tmpArray[0] == profileName)
                     {
-                        set_PictureBox_To_Profile_Picture(tmpArray[1]);
+                        setPictureBoxToProfilePicture(tmpArray[1]);
                         cb_ProfilePictures.SelectedItem = tmpArray[1];
-                        profile_Pic_Name = tmpArray[1];
+                        profilePicName = tmpArray[1];
+                        playerProfileSelectedFromList = true;
                     }
                 }
             }
@@ -150,11 +162,20 @@ namespace RussianRouletteAssessment
                     cb_ProfilePictures.SelectedIndex = 0;
                     firstRun = false;
                 }
+                else
+                {
+                    cb_ProfilePictures.SelectedIndex = frm_Menu.ProfilePicturesGetIndex(profilePicName);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+        }
+
+        private void cb_UserName_TextChanged(object sender, EventArgs e)
+        {
+            profileName = cb_UserName.Text;
         }
     }
 }

@@ -54,15 +54,16 @@
             this.cb_UserName.Location = new System.Drawing.Point(133, 21);
             this.cb_UserName.Name = "cb_UserName";
             this.cb_UserName.Size = new System.Drawing.Size(256, 21);
-            this.cb_UserName.TabIndex = 2;
+            this.cb_UserName.TabIndex = 0;
             this.cb_UserName.SelectedIndexChanged += new System.EventHandler(this.cb_UserName_SelectedIndexChanged);
+            this.cb_UserName.TextChanged += new System.EventHandler(this.cb_UserName_TextChanged);
             // 
             // btn_Continue
             // 
             this.btn_Continue.Location = new System.Drawing.Point(537, 406);
             this.btn_Continue.Name = "btn_Continue";
             this.btn_Continue.Size = new System.Drawing.Size(75, 23);
-            this.btn_Continue.TabIndex = 3;
+            this.btn_Continue.TabIndex = 2;
             this.btn_Continue.Text = "Continue";
             this.btn_Continue.UseVisualStyleBackColor = true;
             this.btn_Continue.Click += new System.EventHandler(this.btn_Continue_Click);
@@ -90,7 +91,7 @@
             this.btn_Exit.Location = new System.Drawing.Point(29, 406);
             this.btn_Exit.Name = "btn_Exit";
             this.btn_Exit.Size = new System.Drawing.Size(75, 23);
-            this.btn_Exit.TabIndex = 6;
+            this.btn_Exit.TabIndex = 3;
             this.btn_Exit.Text = "Exit Game";
             this.btn_Exit.UseVisualStyleBackColor = true;
             this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
@@ -102,7 +103,7 @@
             this.cb_ProfilePictures.Location = new System.Drawing.Point(133, 359);
             this.cb_ProfilePictures.Name = "cb_ProfilePictures";
             this.cb_ProfilePictures.Size = new System.Drawing.Size(256, 21);
-            this.cb_ProfilePictures.TabIndex = 7;
+            this.cb_ProfilePictures.TabIndex = 1;
             this.cb_ProfilePictures.SelectedIndexChanged += new System.EventHandler(this.cb_ProfilePictures_SelectedIndexChanged);
             // 
             // frm_PlayerProfile
