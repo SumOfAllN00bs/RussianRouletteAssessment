@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frm_Game));
             this.AnimTimer = new System.Windows.Forms.Timer(this.components);
             this.pnl_canvas = new System.Windows.Forms.Panel();
+            this.IntroTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // AnimTimer
@@ -45,6 +46,12 @@
             this.pnl_canvas.Name = "pnl_canvas";
             this.pnl_canvas.Size = new System.Drawing.Size(624, 441);
             this.pnl_canvas.TabIndex = 0;
+            this.pnl_canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnl_canvas_MouseDown);
+            // 
+            // IntroTimer
+            // 
+            this.IntroTimer.Interval = 2500;
+            this.IntroTimer.Tick += new System.EventHandler(this.IntroTimer_Tick);
             // 
             // frm_Game
             // 
@@ -66,5 +73,6 @@
 
         private System.Windows.Forms.Timer AnimTimer;
         private System.Windows.Forms.Panel pnl_canvas;
+        private System.Windows.Forms.Timer IntroTimer;
     }
 }

@@ -158,6 +158,23 @@
     <EmbeddedResource Include="PlayerIcons\overkill.png" />
     <EmbeddedResource Include="PlayerIcons\pistol-gun.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestImages\Died.png" />
+    <EmbeddedResource Include="TestImages\Fire.png" />
+    <EmbeddedResource Include="TestImages\Intro.png" />
+    <EmbeddedResource Include="TestImages\LoadBullet.png" />
+    <EmbeddedResource Include="TestImages\SpinChamber.png" />
+    <EmbeddedResource Include="TestImages\Survived.png" />
+    <EmbeddedResource Include="TestImages\SurvivedDeusExMachina.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="IntroAnimation\Intro_1-01.png" />
+    <EmbeddedResource Include="IntroAnimation\Intro_1-02.png" />
+    <EmbeddedResource Include="IntroAnimation\Intro_1-03.png" />
+    <EmbeddedResource Include="IntroAnimation\Intro_1-04.png" />
+    <EmbeddedResource Include="IntroAnimation\Intro_1-05.png" />
+    <EmbeddedResource Include="IntroAnimation\Intro_1-06.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
