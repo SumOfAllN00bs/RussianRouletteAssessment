@@ -101,8 +101,8 @@ namespace RussianRouletteAssessment
 
                 //load in TestImages
                 //GameAnimations.AddAnimation(Anim_Intro, new string[] { "RussianRouletteAssessment.TestImages.Intro.png" });
-                GameAnimations.AddAnimation(Anim_LoadBullet, new string[] { "RussianRouletteAssessment.TestImages.LoadBullet.png" });
-                GameAnimations.AddAnimation(Anim_SpinChamber, new string[] { "RussianRouletteAssessment.TestImages.SpinChamber.png" });
+                //GameAnimations.AddAnimation(Anim_LoadBullet, new string[] { "RussianRouletteAssessment.TestImages.LoadBullet.png" });
+                //GameAnimations.AddAnimation(Anim_SpinChamber, new string[] { "RussianRouletteAssessment.TestImages.SpinChamber.png" });
                 GameAnimations.AddAnimation(Anim_Fire, new string[] { "RussianRouletteAssessment.TestImages.Fire.png" });
                 GameAnimations.AddAnimation(Anim_Death, new string[] { "RussianRouletteAssessment.TestImages.Died.png" });
                 GameAnimations.AddAnimation(Anim_Survive, new string[] { "RussianRouletteAssessment.TestImages.Survived.png" });
@@ -114,6 +114,10 @@ namespace RussianRouletteAssessment
                                                                         "RussianRouletteAssessment.IntroAnimation.Intro_1-04.png",
                                                                         "RussianRouletteAssessment.IntroAnimation.Intro_1-05.png",
                                                                         "RussianRouletteAssessment.IntroAnimation.Intro_1-06.png" });
+                GameAnimations.AddAnimation(Anim_LoadBullet, new string[] { "RussianRouletteAssessment.LoadBulletAnimation.LoadBullet_1-01.png",
+                                                                            "RussianRouletteAssessment.LoadBulletAnimation.LoadBullet_1-02.png",
+                                                                            "RussianRouletteAssessment.LoadBulletAnimation.LoadBullet_1-03.png"});
+                GameAnimations.AddAnimation(Anim_SpinChamber, new string[] { "RussianRouletteAssessment.SpinChamberAnimation.SpinChamber_1-01.png" });
                 GameAnimations.SetAllLoop(false);
                 GameAnimations.SetAllPaused(true);
 
@@ -152,8 +156,17 @@ namespace RussianRouletteAssessment
                     }
                     break;
                 case GameStates.LoadBullet:
+                    AnimTimer.Interval = 800;
+                    if (Anim_LoadBullet.Ended)
+                    {
+                        StateOfTheGame = GameStates.SpinChamber;
+                    }
                     break;
                 case GameStates.SpinChamber:
+                    if (Anim_SpinChamber.Ended)
+                    {
+                        StateOfTheGame = GameStates.Fire;
+                    }
                     break;
                 case GameStates.Fire:
                     break;
@@ -178,13 +191,21 @@ namespace RussianRouletteAssessment
         {
             switch (StateOfTheGame)
             {
-                case GameStates.Intro:
+                case GameStates.Intro: //skip intro
                     StateOfTheGame = GameStates.LoadBullet;
                     IntroTimer.Stop();
                     break;
                 case GameStates.LoadBullet:
+                    if (e.X > 130 && e.X < 180 && e.Y > 285 && e.Y < 385) //user clicked on first bullet
+                    {
+                        Anim_LoadBullet.Paused = false;//start transition
+                    }
                     break;
                 case GameStates.SpinChamber:
+                    if (e.X > 350 && e.X < 445 && e.Y > 75 && e.Y < 170) //user clicked on Chamber
+                    {
+                        Anim_SpinChamber.Paused = false;//start transition
+                    }
                     break;
                 case GameStates.Fire:
                     break;
@@ -208,6 +229,7 @@ namespace RussianRouletteAssessment
         private Image[] _ImageSet;
         private bool paused = false;
         private bool loop = false;
+        private bool ended = false;
 
         public Animation()
         {
@@ -280,9 +302,14 @@ namespace RussianRouletteAssessment
                     {
                         CurrentImage = 0;
                     }
+                    else
+                    {
+                        ended = true;
+                    }
                 }
                 else
                 {
+                    ended = false;
                     CurrentImage++;
                 }
             }
@@ -343,6 +370,14 @@ namespace RussianRouletteAssessment
             set
             {
                 loop = value;
+            }
+        }
+
+        public bool Ended
+        {
+            get
+            {
+                return ended;
             }
         }
     }
