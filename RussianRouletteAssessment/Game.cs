@@ -13,7 +13,6 @@ using System.Drawing.Text;
 using System.Media;
 
 /*
- * Todo:Cheat System
  * Todo:Highscore Board save after each game
  */
 namespace RussianRouletteAssessment
@@ -69,6 +68,12 @@ namespace RussianRouletteAssessment
         private int Bullet = 0; //0=NoBullet,1=Bullet in chamber slot 1, 2=Bullet in chamber slot 2...
         private int CurrentChamber = 0; //first chamber, used to keep track of what chamber the hammer will hit when triggered
         private int PointAwayChances = 2; //two chances to point gun somewhere else
+        //cheats
+        private string[] GameCheats;
+        private bool Cheating = false;
+        private bool GodMode = false;
+        private bool ExtraLife = false;
+        private bool ExtraChance = false;
 
         //stats
         private int Game_Highscore;
@@ -209,6 +214,9 @@ namespace RussianRouletteAssessment
                 Game_CloseCalls = 0;
                 Game_DeiExMachinas = 0;
 
+                //cheating off
+                Cheating = false;
+
                 //fonts
                 sf.LineAlignment = StringAlignment.Near;
                 sf.Alignment = StringAlignment.Near;
@@ -220,14 +228,20 @@ namespace RussianRouletteAssessment
                 MessageBox.Show("Error: " + ex);
             }
         }
+        public frm_Game(string[] cheats): this()
+        {
+            GameCheats = cheats;
+            Cheating = true;
+        }
 
         private void frm_Game_Load(object sender, EventArgs e)
         {
+            //Setup misc
             NewGame = false; // make sure this is turned off until user chooses to turn it on again
             this.Text = "Russian Roulette - Welcome " + frm_PlayerProfile.profileName;
+
             //reset variables
             Game_CurrentScore = 0;
-
             Bullet = 0;
             BulletLoad = false;
             Chambers = new int[6] { 0, 0, 0, 0, 0, 0 };
@@ -236,10 +250,39 @@ namespace RussianRouletteAssessment
             PointingAway = false;
             Hammer = false;
             Triggered = false;
+            //cheats
+            GodMode = false;
+            ExtraLife = false;
+            ExtraChance = false;
+
             GameAnimations.ResetAll();
             GameAnimations.SetAllLoop(false);
             StateOfTheGame = GameStates.Intro;
 
+            //handle cheats
+            if (Cheating)
+            {
+                foreach (string cheat in GameCheats)
+                {
+                    switch (cheat)
+                    {
+                        case "Extra Chance":
+                            ExtraChance = true;
+                            PointAwayChances = 3;
+                            break;
+                        case "Extra Life":
+                            ExtraLife = true;
+                            break;
+                        case "God Mode":
+                            GodMode = true;
+                            break;
+                        default:
+                            break;
+                    }
+                } 
+            }
+
+            //Init start of game
             AnimTimer.Interval = 40; //fps of around 25
             AnimTimer.Start();
             IntroTimer.Start();
@@ -513,6 +556,27 @@ namespace RussianRouletteAssessment
             GameAudio = new SoundPlayer(Properties.Resources.Fire);
             GameAudio.Play();
             Game_BulletsFired += 1;
+
+            if (GodMode)
+            {
+                Game_Survived();
+                return;
+            }
+            else if (ExtraLife) //not godmode but is extralife
+            {
+                GameEnded = false;
+                CurrentChamber -= 1; //go back a move
+                if (ExtraChance)
+                {
+                    PointAwayChances = 3;
+                }
+                else
+                {
+                    PointAwayChances = 2;
+                }
+                return;
+            }
+
             if (new Random().Next(1, 100) == 100)
             {
                 Game_DeusExMachina(); //God saves ya

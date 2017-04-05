@@ -60,7 +60,7 @@ namespace RussianRouletteAssessment
         //hold a copy of itself
         private static frm_Menu me = null;
         //The Game Form
-        private frm_Game Game = new frm_Game();
+        private frm_Game Game;
 
         //public functions
 
@@ -272,7 +272,11 @@ namespace RussianRouletteAssessment
             //In modal mode so we don't get confused by multiple high scores and player profiles
             while (frm_Game.NewGame)
             {
-                Game = new frm_Game();
+                if (Cheating)
+                {
+                    Game = new frm_Game(CheatsFromListBox());
+                }
+                else Game = new frm_Game();
                 Game.ShowDialog();
             }
         }

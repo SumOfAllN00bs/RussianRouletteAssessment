@@ -29,17 +29,6 @@ namespace RussianRouletteAssessment
         private void frm_ScoreBoard_Load(object sender, EventArgs e)
         {
             //handle cheats
-
-            //override previous cheat usage possibly redundent in future
-            /*
-            dgv_HighScores.Columns["UserName"].ReadOnly = true;
-            dgv_HighScores.Columns["HighScore"].ReadOnly = true;
-            dgv_HighScores.Columns["TimesPlayed"].ReadOnly = true;
-            dgv_HighScores.Columns["BulletsFired"].ReadOnly = true;
-            dgv_HighScores.Columns["Deaths"].ReadOnly = true;
-            dgv_HighScores.Columns["CloseCalls"].ReadOnly = true;
-            dgv_HighScores.Columns["DeiExMachina"].ReadOnly = true;*/
-
             if (ScoreBoardCheats != null)
             {
                 foreach (string cheat in ScoreBoardCheats)
