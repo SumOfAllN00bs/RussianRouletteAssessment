@@ -47,13 +47,13 @@
             this.txt_TimesPlayed = new System.Windows.Forms.TextBox();
             this.txt_HighScore = new System.Windows.Forms.TextBox();
             this.pnl_CheatMenu = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.lbl_MoveCheats = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lb_AvailableCheats = new System.Windows.Forms.ListBox();
             this.lbl_AvailableCheats = new System.Windows.Forms.Label();
             this.lb_ActiveCheats = new System.Windows.Forms.ListBox();
             this.btn_HighScores = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.btn_NewPlayer = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ProfilePic)).BeginInit();
             this.pnl_CheatMenu.SuspendLayout();
@@ -138,9 +138,9 @@
             this.lbl_BulletsShot.AutoSize = true;
             this.lbl_BulletsShot.Location = new System.Drawing.Point(9, 172);
             this.lbl_BulletsShot.Name = "lbl_BulletsShot";
-            this.lbl_BulletsShot.Size = new System.Drawing.Size(63, 13);
+            this.lbl_BulletsShot.Size = new System.Drawing.Size(64, 13);
             this.lbl_BulletsShot.TabIndex = 12;
-            this.lbl_BulletsShot.Text = "Bullets Shot";
+            this.lbl_BulletsShot.Text = "Bullets Fired";
             // 
             // lbl_CloseCalls
             // 
@@ -223,6 +223,15 @@
             this.pnl_CheatMenu.TabIndex = 21;
             this.pnl_CheatMenu.Visible = false;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(222, 98);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(246, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Cheats will only be in effect if this window is visible.";
+            // 
             // lbl_MoveCheats
             // 
             this.lbl_MoveCheats.AutoSize = true;
@@ -285,15 +294,6 @@
             this.btn_HighScores.Text = "High Scores";
             this.btn_HighScores.UseVisualStyleBackColor = true;
             this.btn_HighScores.Click += new System.EventHandler(this.btn_HighScores_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(222, 98);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(246, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Cheats will only be in effect if this window is visible.";
             // 
             // btn_NewPlayer
             // 

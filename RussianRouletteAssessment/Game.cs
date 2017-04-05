@@ -9,29 +9,26 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Drawing.Text;
+using System.Media;
 
+/*
+ * Todo:Sound edit sound length
+ * Todo:Cheat System
+ * Todo:Highscore Board save after each game
+ */
 namespace RussianRouletteAssessment
 {
     public partial class frm_Game : Form
     {
         //private variables
+        //Graphics
         private Bitmap buffer;
         private Graphics GameGraphics;
-        private enum GameStates
-        {
-            Intro = 0,
-            LoadBullet,//starts with bullet out, transition starts when user places bullet, ends when animation of bullet is done
-            SpinChamber,//starts with Chamber out, transition is when user starts to close chamber and spins it, ends when Chamber is spun
-            PointDirection,//Used to figure out where player wants to point gun
-            Fire,//starts with finger on trigger, transitions when player activates the trigger, ends when firing animation is done
-            Death,//starts with gun fired but whether or not player survived is indeterminate, transition is automatic after 1.5 seconds
-                    //ends with players death, players relief, relief cause of act of god
-            Survive,//starts with gun fired but whether or not player survived is indeterminate, transition is automatic after 1.5 seconds
-                    //ends with players relief
-            DeusExMachina//starts with gun fired but whether or not player survived is indeterminate, transition is automatic after 1.5 seconds
-                         //ends with relief because of an act of god
-        }
-        private GameStates StateOfTheGame = GameStates.Intro;
+
+        //Sounds
+        SoundPlayer GameAudio;
+
         //Animations
         private Animations GameAnimations = new Animations();
         private Animation Anim_Intro = new Animation();
@@ -44,22 +41,53 @@ namespace RussianRouletteAssessment
         private Animation Anim_Survive = new Animation();
         private Animation Anim_DeusExMachina = new Animation();
 
+        //Gamestate
+        private enum GameStates
+        {
+            Intro = 0,
+            LoadBullet,//starts with bullet out, transition starts when user places bullet, ends when animation of bullet is done
+            SpinChamber,//starts with Chamber out, transition is when user starts to close chamber and spins it, ends when Chamber is spun
+            PointDirection,//Used to figure out where player wants to point gun
+            Fire,//starts with finger on trigger, transitions when player activates the trigger, ends when firing animation is done
+            Death,//starts with gun fired but whether or not player survived is indeterminate, transition is automatic after 1.5 seconds
+                  //ends with players death, players relief, relief cause of act of god
+            Survive,//starts with gun fired but whether or not player survived is indeterminate, transition is automatic after 1.5 seconds
+                    //ends with players relief
+            DeusExMachina//starts with gun fired but whether or not player survived is indeterminate, transition is automatic after 1.5 seconds
+                         //ends with relief because of an act of god
+        }
+        private GameStates StateOfTheGame = GameStates.Intro;
+
         //Game Logic
-        private int Bullet = 0; //0=NoBullet,1=Bullet in slot 1, 2=Bullet in slot 2...
         private bool BulletLoad = false;
-        private int[] Chambers = new int[6] { 0, 0, 0, 0, 0, 0 };
         private bool NextDeath = false;
-        private int CurrentChamber = 0; //first chamber, used to keep track of what chamber the hammer will hit when triggered
-        private int PointAwayChances = 2; //two chances to point gun somewhere else
         private bool PointingAway = false; //has the user selected to point away
         private bool Hammer = false; //false = hammer isn't set, true = hammer is pulled back ready to fire
         private bool Triggered = false; //trigger is pulled
         private bool GameEnded = false;
         private bool GameWon = false;
+        private int[] Chambers = new int[6] { 0, 0, 0, 0, 0, 0 };
+        private int Bullet = 0; //0=NoBullet,1=Bullet in chamber slot 1, 2=Bullet in chamber slot 2...
+        private int CurrentChamber = 0; //first chamber, used to keep track of what chamber the hammer will hit when triggered
+        private int PointAwayChances = 2; //two chances to point gun somewhere else
+
+        //stats
+        private int Game_Highscore;
+        private int Game_CurrentScore;
+        private int Game_TimesPlayed;
+        private int Game_Deaths;
+        private int Game_BulletsFired;
+        private int Game_CloseCalls;
+        private int Game_DeiExMachinas;
+
+        //font
+        Font GameTextFont;
+        PrivateFontCollection pfc = new PrivateFontCollection();
+        StringFormat sf = new StringFormat();
+
 
         //public
-
-        public static bool NewGame = true; //if user sets this then Main form will start a new game
+        public static bool NewGame = false; //if user sets this then Main form will start a new game
 
 
         //private methods
@@ -90,7 +118,7 @@ namespace RussianRouletteAssessment
                     gameGraphics.DrawImage(Anim_PointDirection.CurrentImage(), 0, 0);
                     break;
                 case GameStates.Fire:
-                    if (PointingAway)gameGraphics.DrawImage(Anim_AltFire.CurrentImage(), 0, 0);
+                    if (PointingAway) gameGraphics.DrawImage(Anim_AltFire.CurrentImage(), 0, 0);
                     else gameGraphics.DrawImage(Anim_Fire.CurrentImage(), 0, 0);
                     break;
                 case GameStates.Death:
@@ -104,6 +132,20 @@ namespace RussianRouletteAssessment
                     break;
                 default:
                     break;
+            }
+            if (GameEnded)
+            {
+                if (GameWon)
+                {
+                    gameGraphics.DrawString("You've won, with " + Game_CurrentScore + " points", GameTextFont, Brushes.Black, 12.0f, pnl_canvas.Height - 25, sf);
+                }
+                else
+                {
+                    gameGraphics.DrawString("You've lost, with " + Game_CurrentScore + " points", GameTextFont, Brushes.Black, 12.0f, pnl_canvas.Height - 25, sf);
+                }
+                gameGraphics.DrawString("Play again?", GameTextFont, Brushes.Black, 400.0f, pnl_canvas.Height - 25, sf);
+                gameGraphics.DrawString("Yes", GameTextFont, Brushes.Black, 520, pnl_canvas.Height - 25, sf);
+                gameGraphics.DrawString("No", GameTextFont, Brushes.Black, 560, pnl_canvas.Height - 25, sf);
             }
         }
 
@@ -161,7 +203,20 @@ namespace RussianRouletteAssessment
 
                 GameAnimations.AddAnimation(Anim_Death, new string[] { "RussianRouletteAssessment.DeathAnimation.Died_1-01.png" });
 
+                //stats
+                Game_Highscore = 0;
+                Game_CurrentScore = 0;
+                Game_TimesPlayed = 0;
+                Game_Deaths = 0;
+                Game_BulletsFired = 0;
+                Game_CloseCalls = 0;
+                Game_DeiExMachinas = 0;
 
+                //fonts
+                sf.LineAlignment = StringAlignment.Near;
+                sf.Alignment = StringAlignment.Near;
+                pfc.AddFontFile(Path.Combine(Application.StartupPath, "iosevka-regular.ttf"));
+                GameTextFont = new Font(pfc.Families[0], 13, FontStyle.Regular);
             }
             catch (Exception ex)
             {
@@ -169,11 +224,14 @@ namespace RussianRouletteAssessment
             }
         }
 
+
         private void frm_Game_Load(object sender, EventArgs e)
         {
             NewGame = false; // make sure this is turned off until user chooses to turn it on again
             this.Text = "Russian Roulette - Welcome " + frm_PlayerProfile.profileName;
             //reset variables
+            Game_CurrentScore = 0;
+
             Bullet = 0;
             BulletLoad = false;
             Chambers = new int[6] { 0, 0, 0, 0, 0, 0 };
@@ -238,59 +296,36 @@ namespace RussianRouletteAssessment
                     {
                         Hammer = false;
                         Triggered = false;
+                        Game_BulletsFired += 1;
 
                         if (NextDeath)
                         {
                             NextDeath = false;
                             PointAwayChances = -1;
-                            StateOfTheGame = GameStates.Death;
-                            GameEnded = true;
-                            GameWon = false;
-                            if (new Random().Next(1, 100) == 100)
-                            {
-
-                                GameWon = true;
-                                StateOfTheGame = GameStates.DeusExMachina;
-                            } //God saves ya
-
-
-
+                            //No Change in points tried your luck and failed
+                            Game_Die();
                         }
                         else if (CurrentChamber == 5 && !PointingAway) //you chose this path >:c
                         {
-                            StateOfTheGame = GameStates.Death;
-                            GameEnded = true;
-                            GameWon = false;
-                            if (new Random().Next(1, 100) == 100)
-                            {
-
-                                GameWon = true;
-                                StateOfTheGame = GameStates.DeusExMachina;
-                            } //God saves ya
+                            Game_CurrentScore -= 10;
+                            Game_Die();
                         }
                         else if (CurrentChamber == 5 && PointingAway)
                         {
-                            //Todo:add Close Call
-                            StateOfTheGame = GameStates.Survive;
-                            GameEnded = true;
-                            GameWon = true;
+                            Game_CurrentScore += 30; // close calls are the most rewarding cause they're the most risky wins
+                            Game_CloseCalls += 1;
+                            Game_Survived();
                         }
                         else if (CurrentChamber != 5 && !PointingAway)
                         {
                             if (Chambers[CurrentChamber] == 1)
                             {
-                                StateOfTheGame = GameStates.Death;
-                                GameEnded = true;
-                                GameWon = false;
-                                if (new Random().Next(1, 100) == 100)
-                                {
-
-                                    GameWon = true;
-                                    StateOfTheGame = GameStates.DeusExMachina;
-                                } //God saves ya
+                                //No change in points
+                                Game_Die();
                             }
                             else
                             {
+                                Game_CurrentScore += 5; //Plus five points for every successful pull of the trigger
                                 StateOfTheGame = GameStates.Survive; // click sound
                             }
                         }
@@ -298,14 +333,14 @@ namespace RussianRouletteAssessment
                         {
                             if (Chambers[CurrentChamber] == 1)
                             {
-                                //this isn't a close call. Close calls are only if you use your point away when there is only 1 chamber left
-                                GameEnded = true;
-                                GameWon = true;
-                                StateOfTheGame = GameStates.Survive;
+                                //this isn't a close call. Close calls are only if you use your "point away" when there is only 1 chamber left
+                                Game_Survived();
+                                Game_CurrentScore += 10; //Made a good decision (lucky)
                             }
                             else
                             {
-                                StateOfTheGame = GameStates.Survive;
+                                //No change in points
+                                StateOfTheGame = GameStates.Survive; // click sound
                             }
                         }
                         if (PointAwayChances == 0)
@@ -343,21 +378,25 @@ namespace RussianRouletteAssessment
                     if (e.X > 130 && e.X < 180 && e.Y > 285 && e.Y < 385) //user clicked on first bullet
                     {
                         BulletLoad = true;
+                        GameAudio = new SoundPlayer(Properties.Resources.Load);
+                        GameAudio.Play();
                     }
                     break;
                 case GameStates.SpinChamber:
                     if (e.X > 350 && e.X < 445 && e.Y > 75 && e.Y < 170) //user clicked on Chamber
                     {
+                        GameAudio = new SoundPlayer(Properties.Resources.Chamber);
+                        GameAudio.Play();
                         Anim_SpinChamber.Advance();
                     }
                     break;
                 case GameStates.PointDirection:
-                    if (e.X > pnl_canvas.Width/2) //user clicked on Away
+                    if (e.X > pnl_canvas.Width / 2) //user clicked on Point Away
                     {
                         PointingAway = true;
                         PointAwayChances -= 1; //used up a chance
                     }
-                    else if (e.X < pnl_canvas.Width/2)// user clicks on Point at user
+                    else if (e.X < pnl_canvas.Width / 2)// user clicks on Point at user
                     {
                         PointingAway = false;
                     }
@@ -368,23 +407,32 @@ namespace RussianRouletteAssessment
                     {
                         if (e.X > 123 && e.X < 160 && e.Y > 90 && e.Y < 125 && Hammer == false) //user clicked on Hammer alt
                         {
+                            GameAudio = new SoundPlayer(Properties.Resources.Hammer);
+                            GameAudio.Play();
                             Hammer = true;
                             Anim_AltFire.Advance();
                         }
                         if (e.X > 175 && e.X < 220 && e.Y > 230 && e.Y < 290 && Hammer == true) //user clicked on Trigger alt
                         {
+                            GameAudio = new SoundPlayer(Properties.Resources.Fire);
+                            GameAudio.Play();
                             Triggered = true;
                             Anim_AltFire.Advance();
                         }
-                    } else //!PointingAway
+                    }
+                    else //!PointingAway
                     {
                         if (e.X > 400 && e.X < 430 && e.Y > 90 && e.Y < 125 && Hammer == false) //user clicked on Hammer
                         {
+                            GameAudio = new SoundPlayer(Properties.Resources.Hammer);
+                            GameAudio.Play();
                             Hammer = true;
                             Anim_Fire.Advance();
                         }
                         if (e.X > 330 && e.X < 380 && e.Y > 230 && e.Y < 290 && Hammer == true) //user clicked on Trigger
                         {
+                            GameAudio = new SoundPlayer(Properties.Resources.Fire);
+                            GameAudio.Play();
                             Triggered = true;
                             Anim_Fire.Advance();
                         }
@@ -392,25 +440,67 @@ namespace RussianRouletteAssessment
 
                     break;
                 case GameStates.Death:
+                    if (GameEnded)
+                    {
+                        if (e.X > 520 && e.X < 555 && e.Y > pnl_canvas.Height - 25) //user clicked on Yes
+                        {
+                            NewGame = true;
+                            this.Close();
+                        }
+                        else if (e.X > 560 && e.Y > pnl_canvas.Height - 25) //user clicked on No
+                        {
+                            NewGame = false;
+                            this.Close();
+                        }
+                    }
                     break;
                 case GameStates.Survive:
-                    if (CurrentChamber != 5)
+                    if (!GameEnded)
                     {
-                        GameAnimations.ResetAll();
-                        CurrentChamber++;
-                        if (PointAwayChances != 0)
+                        if (CurrentChamber != 5)
                         {
-                            StateOfTheGame = GameStates.PointDirection;
+                            GameAnimations.ResetAll();
+                            CurrentChamber++;
+                            if (PointAwayChances != 0)
+                            {
+                                StateOfTheGame = GameStates.PointDirection;
+                            }
+                            else
+                            {
+                                PointingAway = false;
+                                StateOfTheGame = GameStates.Fire;
+                            }
                         }
-                        else
+                    }
+                    else
+                    {
+                        if (e.X > 520 && e.X < 555 && e.Y > pnl_canvas.Height - 25) //user clicked on Yes
                         {
-                            PointingAway = false;
-                            StateOfTheGame = GameStates.Fire;
+                            NewGame = true;
+                            this.Close();
+                        }
+                        else if (e.X > 560 && e.Y > pnl_canvas.Height - 25) //user clicked on No
+                        {
+                            NewGame = false;
+                            this.Close();
                         }
                     }
 
                     break;
                 case GameStates.DeusExMachina:
+                    if (GameEnded)
+                    {
+                        if (e.X > 520 && e.X < 555 && e.Y > pnl_canvas.Height - 25) //user clicked on Yes
+                        {
+                            NewGame = true;
+                            this.Close();
+                        }
+                        else if (e.X > 560 && e.Y > pnl_canvas.Height - 25) //user clicked on No
+                        {
+                            NewGame = false;
+                            this.Close();
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -421,6 +511,44 @@ namespace RussianRouletteAssessment
         {
             StateOfTheGame = GameStates.Fire;
             PointDirectionTimer.Stop();
+        }
+
+        private void Game_Die()
+        {
+            if (new Random().Next(1, 100) == 100)
+            {
+                Game_DeusExMachina(); //God saves ya
+
+            }
+            else
+            {
+                StateOfTheGame = GameStates.Death;
+                GameEnded = true;
+                GameWon = false;
+                Game_Highscore = Math.Max(Game_CurrentScore, Game_Highscore);
+                Game_Deaths += 1;
+            }
+            Game_TimesPlayed += 1;
+        }
+
+        private void Game_Survived()
+        {
+            GameEnded = true;
+            GameWon = true;
+            StateOfTheGame = GameStates.Survive;
+            Game_TimesPlayed += 1;
+            Game_Highscore = Math.Max(Game_CurrentScore, Game_Highscore);
+        }
+
+        private void Game_DeusExMachina()
+        {
+            //Life isn't fair neither is this game... here's a bunch of points
+            Game_CurrentScore += 50; //God likes you, so I like you
+            GameWon = true;
+            StateOfTheGame = GameStates.DeusExMachina;
+            Game_DeiExMachinas += 1;
+            Game_TimesPlayed += 1;
+            Game_Highscore = Math.Max(Game_CurrentScore, Game_Highscore);
         }
     }
     class Animation
