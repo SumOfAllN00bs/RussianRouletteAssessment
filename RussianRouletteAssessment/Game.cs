@@ -13,7 +13,6 @@ using System.Drawing.Text;
 using System.Media;
 
 /*
- * Todo:Sound edit sound length
  * Todo:Cheat System
  * Todo:Highscore Board save after each game
  */
@@ -84,12 +83,10 @@ namespace RussianRouletteAssessment
         Font GameTextFont;
         PrivateFontCollection pfc = new PrivateFontCollection();
         StringFormat sf = new StringFormat();
-
-
+        
         //public
         public static bool NewGame = false; //if user sets this then Main form will start a new game
-
-
+        
         //private methods
         private void PaintCanvas()
         {
@@ -224,7 +221,6 @@ namespace RussianRouletteAssessment
             }
         }
 
-
         private void frm_Game_Load(object sender, EventArgs e)
         {
             NewGame = false; // make sure this is turned off until user chooses to turn it on again
@@ -282,8 +278,8 @@ namespace RussianRouletteAssessment
                 case GameStates.SpinChamber:
                     if (Anim_SpinChamber.Ended)
                     {
-                        //Random spinRandom = new Random(); //Randomize location of bullet
-                        //Bullet = spinRandom.Next(1, 6);
+                        Random spinRandom = new Random(); //Randomize location of bullet
+                        Bullet = spinRandom.Next(1, 6);
                         Chambers[Bullet - 1] = 1; //this is when we actually load the bullet but user doesn't know that
                         StateOfTheGame = GameStates.PointDirection;
                         AnimTimer.Interval = 40;
@@ -296,7 +292,6 @@ namespace RussianRouletteAssessment
                     {
                         Hammer = false;
                         Triggered = false;
-                        Game_BulletsFired += 1;
 
                         if (NextDeath)
                         {
@@ -336,6 +331,10 @@ namespace RussianRouletteAssessment
                                 //this isn't a close call. Close calls are only if you use your "point away" when there is only 1 chamber left
                                 Game_Survived();
                                 Game_CurrentScore += 10; //Made a good decision (lucky)
+                                GameAudio = new SoundPlayer(Properties.Resources.Fire);
+                                GameAudio.Play();
+                                Game_BulletsFired += 1;
+                                Anim_Fire.Advance(); //flash
                             }
                             else
                             {
@@ -414,10 +413,7 @@ namespace RussianRouletteAssessment
                         }
                         if (e.X > 175 && e.X < 220 && e.Y > 230 && e.Y < 290 && Hammer == true) //user clicked on Trigger alt
                         {
-                            GameAudio = new SoundPlayer(Properties.Resources.Fire);
-                            GameAudio.Play();
                             Triggered = true;
-                            Anim_AltFire.Advance();
                         }
                     }
                     else //!PointingAway
@@ -431,10 +427,7 @@ namespace RussianRouletteAssessment
                         }
                         if (e.X > 330 && e.X < 380 && e.Y > 230 && e.Y < 290 && Hammer == true) //user clicked on Trigger
                         {
-                            GameAudio = new SoundPlayer(Properties.Resources.Fire);
-                            GameAudio.Play();
                             Triggered = true;
-                            Anim_Fire.Advance();
                         }
                     }
 
@@ -515,10 +508,14 @@ namespace RussianRouletteAssessment
 
         private void Game_Die()
         {
+            //Flash from bullet everytime we die
+            Anim_Fire.Advance();
+            GameAudio = new SoundPlayer(Properties.Resources.Fire);
+            GameAudio.Play();
+            Game_BulletsFired += 1;
             if (new Random().Next(1, 100) == 100)
             {
                 Game_DeusExMachina(); //God saves ya
-
             }
             else
             {
@@ -700,6 +697,7 @@ namespace RussianRouletteAssessment
             }
         }
     }
+
     class Animations
     {
         //private

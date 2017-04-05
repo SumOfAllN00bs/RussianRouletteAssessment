@@ -90,8 +90,8 @@
     <Compile Include="ScoreBoard.Designer.cs">
       <DependentUpon>ScoreBoard.cs</DependentUpon>
     </Compile>
-    <None Include="Resources\Load.wav" />
     <None Include="Resources\Hammer.wav" />
+    <None Include="Resources\Load.wav" />
     <None Include="Resources\Fire.wav" />
     <None Include="Resources\Chamber.wav" />
     <EmbeddedResource Include="Form1.resx">
