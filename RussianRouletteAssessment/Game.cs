@@ -15,8 +15,6 @@ namespace RussianRouletteAssessment
     public partial class frm_Game : Form
     {
         //private variables
-        //private Assembly assembly;
-        //private Stream ImageStream;
         private Bitmap buffer;
         private Graphics GameGraphics;
         private enum GameStates
@@ -24,6 +22,7 @@ namespace RussianRouletteAssessment
             Intro = 0,
             LoadBullet,//starts with bullet out, transition starts when user places bullet, ends when animation of bullet is done
             SpinChamber,//starts with Chamber out, transition is when user starts to close chamber and spins it, ends when Chamber is spun
+            PointDirection,//Used to figure out where player wants to point gun
             Fire,//starts with finger on trigger, transitions when player activates the trigger, ends when firing animation is done
             Death,//starts with gun fired but whether or not player survived is indeterminate, transition is automatic after 1.5 seconds
                     //ends with players death, players relief, relief cause of act of god
@@ -32,16 +31,35 @@ namespace RussianRouletteAssessment
             DeusExMachina//starts with gun fired but whether or not player survived is indeterminate, transition is automatic after 1.5 seconds
                          //ends with relief because of an act of god
         }
-        GameStates StateOfTheGame = GameStates.Intro;
+        private GameStates StateOfTheGame = GameStates.Intro;
         //Animations
-        Animations GameAnimations = new Animations();
-        Animation Anim_Intro = new Animation();
-        Animation Anim_LoadBullet = new Animation();
-        Animation Anim_SpinChamber = new Animation();
-        Animation Anim_Fire = new Animation();
-        Animation Anim_Death = new Animation();
-        Animation Anim_Survive = new Animation();
-        Animation Anim_DeusExMachina = new Animation();
+        private Animations GameAnimations = new Animations();
+        private Animation Anim_Intro = new Animation();
+        private Animation Anim_LoadBullet = new Animation();
+        private Animation Anim_SpinChamber = new Animation();
+        private Animation Anim_PointDirection = new Animation();
+        private Animation Anim_Fire = new Animation();
+        private Animation Anim_AltFire = new Animation(); //used for when player is turning gun away
+        private Animation Anim_Death = new Animation();
+        private Animation Anim_Survive = new Animation();
+        private Animation Anim_DeusExMachina = new Animation();
+
+        //Game Logic
+        private int Bullet = 0; //0=NoBullet,1=Bullet in slot 1, 2=Bullet in slot 2...
+        private bool BulletLoad = false;
+        private int[] Chambers = new int[6] { 0, 0, 0, 0, 0, 0 };
+        private bool NextDeath = false;
+        private int CurrentChamber = 0; //first chamber, used to keep track of what chamber the hammer will hit when triggered
+        private int PointAwayChances = 2; //two chances to point gun somewhere else
+        private bool PointingAway = false; //has the user selected to point away
+        private bool Hammer = false; //false = hammer isn't set, true = hammer is pulled back ready to fire
+        private bool Triggered = false; //trigger is pulled
+        private bool GameEnded = false;
+        private bool GameWon = false;
+
+        //public
+
+        public static bool NewGame = true; //if user sets this then Main form will start a new game
 
 
         //private methods
@@ -57,25 +75,32 @@ namespace RussianRouletteAssessment
             switch (StateOfTheGame)
             {
                 case GameStates.Intro:
-                    gameGraphics.DrawImage(Anim_Intro.NextImage(), 0, 0);
+                    Anim_Intro.Advance(); // never stops
+                    gameGraphics.DrawImage(Anim_Intro.CurrentImage(), 0, 0);
                     break;
                 case GameStates.LoadBullet:
-                    gameGraphics.DrawImage(Anim_LoadBullet.NextImage(), 0, 0);
+                    gameGraphics.DrawImage(Anim_LoadBullet.CurrentImage(), 0, 0);
                     break;
                 case GameStates.SpinChamber:
-                    gameGraphics.DrawImage(Anim_SpinChamber.NextImage(), 0, 0);
+                    gameGraphics.DrawImage(Anim_SpinChamber.CurrentImage(), 0, 0);
+                    break;
+                case GameStates.PointDirection:
+                    if (PointingAway) Anim_PointDirection.Index = 1; //select second image
+                    else Anim_PointDirection.Index = 0;
+                    gameGraphics.DrawImage(Anim_PointDirection.CurrentImage(), 0, 0);
                     break;
                 case GameStates.Fire:
-                    gameGraphics.DrawImage(Anim_Fire.NextImage(), 0, 0);
+                    if (PointingAway)gameGraphics.DrawImage(Anim_AltFire.CurrentImage(), 0, 0);
+                    else gameGraphics.DrawImage(Anim_Fire.CurrentImage(), 0, 0);
                     break;
                 case GameStates.Death:
-                    gameGraphics.DrawImage(Anim_Death.NextImage(), 0, 0);
+                    gameGraphics.DrawImage(Anim_Death.CurrentImage(), 0, 0);
                     break;
                 case GameStates.Survive:
-                    gameGraphics.DrawImage(Anim_Survive.NextImage(), 0, 0);
+                    gameGraphics.DrawImage(Anim_Survive.CurrentImage(), 0, 0);
                     break;
                 case GameStates.DeusExMachina:
-                    gameGraphics.DrawImage(Anim_DeusExMachina.NextImage(), 0, 0);
+                    gameGraphics.DrawImage(Anim_DeusExMachina.CurrentImage(), 0, 0);
                     break;
                 default:
                     break;
@@ -103,9 +128,9 @@ namespace RussianRouletteAssessment
                 //GameAnimations.AddAnimation(Anim_Intro, new string[] { "RussianRouletteAssessment.TestImages.Intro.png" });
                 //GameAnimations.AddAnimation(Anim_LoadBullet, new string[] { "RussianRouletteAssessment.TestImages.LoadBullet.png" });
                 //GameAnimations.AddAnimation(Anim_SpinChamber, new string[] { "RussianRouletteAssessment.TestImages.SpinChamber.png" });
-                GameAnimations.AddAnimation(Anim_Fire, new string[] { "RussianRouletteAssessment.TestImages.Fire.png" });
-                GameAnimations.AddAnimation(Anim_Death, new string[] { "RussianRouletteAssessment.TestImages.Died.png" });
-                GameAnimations.AddAnimation(Anim_Survive, new string[] { "RussianRouletteAssessment.TestImages.Survived.png" });
+                //GameAnimations.AddAnimation(Anim_Fire, new string[] { "RussianRouletteAssessment.TestImages.Fire.png" });
+                //GameAnimations.AddAnimation(Anim_Death, new string[] { "RussianRouletteAssessment.TestImages.Died.png" });
+                //GameAnimations.AddAnimation(Anim_Survive, new string[] { "RussianRouletteAssessment.TestImages.Survived.png" });
                 GameAnimations.AddAnimation(Anim_DeusExMachina, new string[] { "RussianRouletteAssessment.TestImages.SurvivedDeusExMachina.png" });
                 //load in Real Images
                 GameAnimations.AddAnimation(Anim_Intro, new string[] {  "RussianRouletteAssessment.IntroAnimation.Intro_1-01.png",
@@ -114,12 +139,28 @@ namespace RussianRouletteAssessment
                                                                         "RussianRouletteAssessment.IntroAnimation.Intro_1-04.png",
                                                                         "RussianRouletteAssessment.IntroAnimation.Intro_1-05.png",
                                                                         "RussianRouletteAssessment.IntroAnimation.Intro_1-06.png" });
+
                 GameAnimations.AddAnimation(Anim_LoadBullet, new string[] { "RussianRouletteAssessment.LoadBulletAnimation.LoadBullet_1-01.png",
                                                                             "RussianRouletteAssessment.LoadBulletAnimation.LoadBullet_1-02.png",
                                                                             "RussianRouletteAssessment.LoadBulletAnimation.LoadBullet_1-03.png"});
+
                 GameAnimations.AddAnimation(Anim_SpinChamber, new string[] { "RussianRouletteAssessment.SpinChamberAnimation.SpinChamber_1-01.png" });
-                GameAnimations.SetAllLoop(false);
-                GameAnimations.SetAllPaused(true);
+
+                GameAnimations.AddAnimation(Anim_PointDirection, new string[] { "RussianRouletteAssessment.PointDirectionAnimation.PointDirection_1-01.png",
+                                                                                "RussianRouletteAssessment.PointDirectionAnimation.PointDirection_1-02.png"});
+
+                GameAnimations.AddAnimation(Anim_Fire, new string[] {   "RussianRouletteAssessment.FireAnimation.Fire_1-01.png",
+                                                                        "RussianRouletteAssessment.FireAnimation.Fire_1-02.png",
+                                                                        "RussianRouletteAssessment.FireAnimation.Fire_1-03.png" });
+
+                GameAnimations.AddAnimation(Anim_AltFire, new string[] {    "RussianRouletteAssessment.AltFireAnimation.Fire_2-01.png",
+                                                                            "RussianRouletteAssessment.AltFireAnimation.Fire_2-02.png",
+                                                                            "RussianRouletteAssessment.AltFireAnimation.Fire_2-03.png" });
+
+                GameAnimations.AddAnimation(Anim_Survive, new string[] { "RussianRouletteAssessment.SurvivedAnimation.Survived_1-01.png" });
+
+                GameAnimations.AddAnimation(Anim_Death, new string[] { "RussianRouletteAssessment.DeathAnimation.Died_1-01.png" });
+
 
             }
             catch (Exception ex)
@@ -130,19 +171,31 @@ namespace RussianRouletteAssessment
 
         private void frm_Game_Load(object sender, EventArgs e)
         {
+            NewGame = false; // make sure this is turned off until user chooses to turn it on again
             this.Text = "Russian Roulette - Welcome " + frm_PlayerProfile.profileName;
+            //reset variables
+            Bullet = 0;
+            BulletLoad = false;
+            Chambers = new int[6] { 0, 0, 0, 0, 0, 0 };
+            CurrentChamber = 0;
+            PointAwayChances = 2;
+            PointingAway = false;
+            Hammer = false;
+            Triggered = false;
+            GameAnimations.ResetAll();
+            GameAnimations.SetAllLoop(false);
+            StateOfTheGame = GameStates.Intro;
+
+            AnimTimer.Interval = 40; //fps of around 25
             AnimTimer.Start();
             IntroTimer.Start();
             Anim_Intro.Loop = true;
-            Anim_Intro.Paused = false;
-
-            StateOfTheGame = GameStates.Intro;
         }
 
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            UpdateGame();
             PaintCanvas();
+            UpdateGame();
         }
 
         private void UpdateGame()
@@ -159,16 +212,107 @@ namespace RussianRouletteAssessment
                     AnimTimer.Interval = 800;
                     if (Anim_LoadBullet.Ended)
                     {
+                        Bullet = 1; //Place a bullet in gun
                         StateOfTheGame = GameStates.SpinChamber;
+                        BulletLoad = false;
+                    }
+                    if (BulletLoad)
+                    {
+                        Anim_LoadBullet.Advance();
                     }
                     break;
                 case GameStates.SpinChamber:
                     if (Anim_SpinChamber.Ended)
                     {
-                        StateOfTheGame = GameStates.Fire;
+                        //Random spinRandom = new Random(); //Randomize location of bullet
+                        //Bullet = spinRandom.Next(1, 6);
+                        Chambers[Bullet - 1] = 1; //this is when we actually load the bullet but user doesn't know that
+                        StateOfTheGame = GameStates.PointDirection;
+                        AnimTimer.Interval = 40;
                     }
                     break;
+                case GameStates.PointDirection:
+                    break;
                 case GameStates.Fire:
+                    if (Triggered)
+                    {
+                        Hammer = false;
+                        Triggered = false;
+
+                        if (NextDeath)
+                        {
+                            NextDeath = false;
+                            PointAwayChances = -1;
+                            StateOfTheGame = GameStates.Death;
+                            GameEnded = true;
+                            GameWon = false;
+                            if (new Random().Next(1, 100) == 100)
+                            {
+
+                                GameWon = true;
+                                StateOfTheGame = GameStates.DeusExMachina;
+                            } //God saves ya
+
+
+
+                        }
+                        else if (CurrentChamber == 5 && !PointingAway) //you chose this path >:c
+                        {
+                            StateOfTheGame = GameStates.Death;
+                            GameEnded = true;
+                            GameWon = false;
+                            if (new Random().Next(1, 100) == 100)
+                            {
+
+                                GameWon = true;
+                                StateOfTheGame = GameStates.DeusExMachina;
+                            } //God saves ya
+                        }
+                        else if (CurrentChamber == 5 && PointingAway)
+                        {
+                            //Todo:add Close Call
+                            StateOfTheGame = GameStates.Survive;
+                            GameEnded = true;
+                            GameWon = true;
+                        }
+                        else if (CurrentChamber != 5 && !PointingAway)
+                        {
+                            if (Chambers[CurrentChamber] == 1)
+                            {
+                                StateOfTheGame = GameStates.Death;
+                                GameEnded = true;
+                                GameWon = false;
+                                if (new Random().Next(1, 100) == 100)
+                                {
+
+                                    GameWon = true;
+                                    StateOfTheGame = GameStates.DeusExMachina;
+                                } //God saves ya
+                            }
+                            else
+                            {
+                                StateOfTheGame = GameStates.Survive; // click sound
+                            }
+                        }
+                        else //PointAwayChances != 0 && CurrentChamber != 5 && PointingAway
+                        {
+                            if (Chambers[CurrentChamber] == 1)
+                            {
+                                //this isn't a close call. Close calls are only if you use your point away when there is only 1 chamber left
+                                GameEnded = true;
+                                GameWon = true;
+                                StateOfTheGame = GameStates.Survive;
+                            }
+                            else
+                            {
+                                StateOfTheGame = GameStates.Survive;
+                            }
+                        }
+                        if (PointAwayChances == 0)
+                        {
+                            NextDeath = true;
+                        }
+                    }
                     break;
                 case GameStates.Death:
                     break;
@@ -198,20 +342,73 @@ namespace RussianRouletteAssessment
                 case GameStates.LoadBullet:
                     if (e.X > 130 && e.X < 180 && e.Y > 285 && e.Y < 385) //user clicked on first bullet
                     {
-                        Anim_LoadBullet.Paused = false;//start transition
+                        BulletLoad = true;
                     }
                     break;
                 case GameStates.SpinChamber:
                     if (e.X > 350 && e.X < 445 && e.Y > 75 && e.Y < 170) //user clicked on Chamber
                     {
-                        Anim_SpinChamber.Paused = false;//start transition
+                        Anim_SpinChamber.Advance();
                     }
                     break;
+                case GameStates.PointDirection:
+                    if (e.X > pnl_canvas.Width/2) //user clicked on Away
+                    {
+                        PointingAway = true;
+                        PointAwayChances -= 1; //used up a chance
+                    }
+                    else if (e.X < pnl_canvas.Width/2)// user clicks on Point at user
+                    {
+                        PointingAway = false;
+                    }
+                    PointDirectionTimer.Start();
+                    break;
                 case GameStates.Fire:
+                    if (PointingAway)
+                    {
+                        if (e.X > 123 && e.X < 160 && e.Y > 90 && e.Y < 125 && Hammer == false) //user clicked on Hammer alt
+                        {
+                            Hammer = true;
+                            Anim_AltFire.Advance();
+                        }
+                        if (e.X > 175 && e.X < 220 && e.Y > 230 && e.Y < 290 && Hammer == true) //user clicked on Trigger alt
+                        {
+                            Triggered = true;
+                            Anim_AltFire.Advance();
+                        }
+                    } else //!PointingAway
+                    {
+                        if (e.X > 400 && e.X < 430 && e.Y > 90 && e.Y < 125 && Hammer == false) //user clicked on Hammer
+                        {
+                            Hammer = true;
+                            Anim_Fire.Advance();
+                        }
+                        if (e.X > 330 && e.X < 380 && e.Y > 230 && e.Y < 290 && Hammer == true) //user clicked on Trigger
+                        {
+                            Triggered = true;
+                            Anim_Fire.Advance();
+                        }
+                    }
+
                     break;
                 case GameStates.Death:
                     break;
                 case GameStates.Survive:
+                    if (CurrentChamber != 5)
+                    {
+                        GameAnimations.ResetAll();
+                        CurrentChamber++;
+                        if (PointAwayChances != 0)
+                        {
+                            StateOfTheGame = GameStates.PointDirection;
+                        }
+                        else
+                        {
+                            PointingAway = false;
+                            StateOfTheGame = GameStates.Fire;
+                        }
+                    }
+
                     break;
                 case GameStates.DeusExMachina:
                     break;
@@ -219,15 +416,20 @@ namespace RussianRouletteAssessment
                     break;
             }
         }
+
+        private void PointDirectionTimer_Tick(object sender, EventArgs e)
+        {
+            StateOfTheGame = GameStates.Fire;
+            PointDirectionTimer.Stop();
+        }
     }
     class Animation
     {
         private Assembly assembly;
         private Stream ImageStream;
         //private
-        private int CurrentImage;
+        private int _index;
         private Image[] _ImageSet;
-        private bool paused = false;
         private bool loop = false;
         private bool ended = false;
 
@@ -240,13 +442,13 @@ namespace RussianRouletteAssessment
         {
             assembly = Assembly.GetExecutingAssembly();
             _ImageSet = newImageSet;
-            CurrentImage = 0;
+            _index = 0;
         }
         public Animation(Image[] newImageSet, int newCurrentImage)
         {
             assembly = Assembly.GetExecutingAssembly();
             _ImageSet = newImageSet;
-            CurrentImage = newCurrentImage;
+            _index = newCurrentImage;
         }
 
         public void AddImage(Image newImage)
@@ -288,37 +490,39 @@ namespace RussianRouletteAssessment
             }
         }
 
-        public Image NextImage()
+        public Image CurrentImage()
         {
             if (_ImageSet == null || _ImageSet.Length < 1)
             {
                 return null;
             }
-            if (!paused)//Only change CurrentImage if game is not paused
+            return _ImageSet[_index];
+        }
+        public void Advance()
+        {
+            if (_index == _ImageSet.Length - 1)
             {
-                if (CurrentImage == _ImageSet.Length - 1)
+                if (loop)//Only reset CurrentImage if loop
                 {
-                    if (loop)//Only reset CurrentImage if loop
-                    {
-                        CurrentImage = 0;
-                    }
-                    else
-                    {
-                        ended = true;
-                    }
+                    _index = 0;
                 }
                 else
                 {
-                    ended = false;
-                    CurrentImage++;
+                    ended = true;
                 }
             }
-            return _ImageSet[CurrentImage];
+            else
+            {
+                ended = false;
+                _index++;
+            }
+
         }
 
         public void Reset()
         {
-            CurrentImage = 0;
+            _index = 0;
+            ended = false;
         }
 
         public Image[] ImageSet
@@ -338,25 +542,12 @@ namespace RussianRouletteAssessment
         {
             get
             {
-                return CurrentImage;
+                return _index;
             }
 
             set
             {
-                CurrentImage = value;
-            }
-        }
-
-        public bool Paused
-        {
-            get
-            {
-                return paused;
-            }
-
-            set
-            {
-                paused = value;
+                _index = value;
             }
         }
 
@@ -443,11 +634,11 @@ namespace RussianRouletteAssessment
             }
         }
 
-        public void SetAllPaused(bool _pause)
+        public void ResetAll()
         {
             foreach (Animation anim in AnimationSet)
             {
-                anim.Paused = _pause;
+                anim.Reset();
             }
         }
 

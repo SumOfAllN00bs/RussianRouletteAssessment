@@ -267,9 +267,14 @@ namespace RussianRouletteAssessment
 
         private void btn_NewGame_Click(object sender, EventArgs e)
         {
+            frm_Game.NewGame = true;
             //run game
             //In modal mode so we don't get confused by multiple high scores and player profiles
-            Game.ShowDialog();
+            while (frm_Game.NewGame)
+            {
+                Game = new frm_Game();
+                Game.ShowDialog();
+            }
         }
     }
 }

@@ -183,6 +183,26 @@
   <ItemGroup>
     <EmbeddedResource Include="SpinChamberAnimation\SpinChamber_1-01.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FireAnimation\Fire_1-01.png" />
+    <EmbeddedResource Include="FireAnimation\Fire_1-02.png" />
+    <EmbeddedResource Include="FireAnimation\Fire_1-03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PointDirectionAnimation\PointDirection_1-01.png" />
+    <EmbeddedResource Include="PointDirectionAnimation\PointDirection_1-02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AltFireAnimation\Fire_2-01.png" />
+    <EmbeddedResource Include="AltFireAnimation\Fire_2-02.png" />
+    <EmbeddedResource Include="AltFireAnimation\Fire_2-03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DeathAnimation\Died_1-01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SurvivedAnimation\Survived_1-01.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

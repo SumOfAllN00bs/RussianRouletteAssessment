@@ -33,6 +33,7 @@
             this.AnimTimer = new System.Windows.Forms.Timer(this.components);
             this.pnl_canvas = new System.Windows.Forms.Panel();
             this.IntroTimer = new System.Windows.Forms.Timer(this.components);
+            this.PointDirectionTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // AnimTimer
@@ -52,6 +53,11 @@
             // 
             this.IntroTimer.Interval = 2500;
             this.IntroTimer.Tick += new System.EventHandler(this.IntroTimer_Tick);
+            // 
+            // PointDirectionTimer
+            // 
+            this.PointDirectionTimer.Interval = 1000;
+            this.PointDirectionTimer.Tick += new System.EventHandler(this.PointDirectionTimer_Tick);
             // 
             // frm_Game
             // 
@@ -74,5 +80,6 @@
         private System.Windows.Forms.Timer AnimTimer;
         private System.Windows.Forms.Panel pnl_canvas;
         private System.Windows.Forms.Timer IntroTimer;
+        private System.Windows.Forms.Timer PointDirectionTimer;
     }
 }
