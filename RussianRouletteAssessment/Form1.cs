@@ -144,6 +144,25 @@ namespace RussianRouletteAssessment
                             txt_DeiExMachina.Text = 0 + "";
 
                         }
+                        //restart highscore board
+                        if (Application.OpenForms["frm_ScoreBoard"] != null)
+                        {
+                            HighScores.Close();
+                            if (Cheating)
+                            {
+                                HighScores = new frm_ScoreBoard(CheatsFromListBox());
+                            }
+                            else
+                            {
+                                HighScores = new frm_ScoreBoard();
+                            } 
+
+                            HighScores.Show();
+                        }
+                        else
+                        {
+                            HighScores.Focus();
+                        }
                     }
 
                 }

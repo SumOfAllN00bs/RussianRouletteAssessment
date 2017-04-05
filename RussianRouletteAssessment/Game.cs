@@ -64,10 +64,12 @@ namespace RussianRouletteAssessment
         private bool Triggered = false; //trigger is pulled
         private bool GameEnded = false;
         private bool GameWon = false;
+        private bool DeusExMachina = false;
         private int[] Chambers = new int[6] { 0, 0, 0, 0, 0, 0 };
         private int Bullet = 0; //0=NoBullet,1=Bullet in chamber slot 1, 2=Bullet in chamber slot 2...
         private int CurrentChamber = 0; //first chamber, used to keep track of what chamber the hammer will hit when triggered
         private int PointAwayChances = 2; //two chances to point gun somewhere else
+
         //cheats
         private string[] GameCheats;
         private bool Cheating = false;
@@ -83,15 +85,16 @@ namespace RussianRouletteAssessment
         private int Game_BulletsFired;
         private int Game_CloseCalls;
         private int Game_DeiExMachinas;
+        private bool Game_Saved;
 
         //font
         Font GameTextFont;
         PrivateFontCollection pfc = new PrivateFontCollection();
         StringFormat sf = new StringFormat();
-        
+
         //public
         public static bool NewGame = false; //if user sets this then Main form will start a new game
-        
+
         //private methods
         private void PaintCanvas()
         {
@@ -140,6 +143,10 @@ namespace RussianRouletteAssessment
                 if (GameWon)
                 {
                     gameGraphics.DrawString("You've won, with " + Game_CurrentScore + " points", GameTextFont, Brushes.Black, 12.0f, pnl_canvas.Height - 25, sf);
+                    if (DeusExMachina)
+                    {
+                        gameGraphics.DrawString("SOMEHOW?!?", GameTextFont, Brushes.Black, 12.0f, pnl_canvas.Height/2, sf);
+                    }
                 }
                 else
                 {
@@ -228,7 +235,8 @@ namespace RussianRouletteAssessment
                 MessageBox.Show("Error: " + ex);
             }
         }
-        public frm_Game(string[] cheats): this()
+
+        public frm_Game(string[] cheats) : this()
         {
             GameCheats = cheats;
             Cheating = true;
@@ -250,6 +258,7 @@ namespace RussianRouletteAssessment
             PointingAway = false;
             Hammer = false;
             Triggered = false;
+            Game_Saved = false;
             //cheats
             GodMode = false;
             ExtraLife = false;
@@ -279,7 +288,7 @@ namespace RussianRouletteAssessment
                         default:
                             break;
                     }
-                } 
+                }
             }
 
             //Init start of game
@@ -392,10 +401,13 @@ namespace RussianRouletteAssessment
                     }
                     break;
                 case GameStates.Death:
+                    Save_Game();
                     break;
                 case GameStates.Survive:
+                    Save_Game();
                     break;
                 case GameStates.DeusExMachina:
+                    Save_Game();
                     break;
                 default:
                     break;
@@ -606,10 +618,125 @@ namespace RussianRouletteAssessment
             //Life isn't fair neither is this game... here's a bunch of points
             Game_CurrentScore += 50; //God likes you, so I like you
             GameWon = true;
+            DeusExMachina = true;
             StateOfTheGame = GameStates.DeusExMachina;
             Game_DeiExMachinas += 1;
             Game_TimesPlayed += 1;
             Game_Highscore = Math.Max(Game_CurrentScore, Game_Highscore);
+        }
+
+        private void Save_Game()
+        {
+            if (!Game_Saved)
+            {
+                try
+                {
+                    bool playerFound = false;
+                    int playerIndex = 0;
+                    string[] Scores = File.ReadAllLines(frm_Menu.HighScoresFilename);
+
+                    if (Scores != null)
+                    {
+                        for (int i = 0; i < Scores.Length; i++) //check to see if player name can be found in Scores
+                        {
+                            if (Scores[i].Split(',')[0] == frm_PlayerProfile.profileName)
+                            {
+                                playerFound = true;
+                                playerIndex = i;
+                                break;
+                            }
+                            else
+                            {
+                                playerIndex = -1;
+                            }
+                        }
+                        if (playerIndex == -1) //if player slot is not found create a new player slot
+                        {
+                            List<string> tmpList = new List<string>(Scores);
+                            tmpList.Add("");
+                            Scores = tmpList.ToArray();
+                            playerIndex = Scores.Length - 1;
+                        }
+                        StringBuilder recordstring = new StringBuilder();
+                        for (int field = 0; field < frm_Menu.HighScoresFileFieldsCount; field++)
+                        {
+                            if (playerFound)
+                            {
+                                switch (field)
+                                {
+                                    case 0: //Profile name
+                                        recordstring.Append(frm_PlayerProfile.profileName + ",");
+                                        break;
+                                    case 1: //Profile Picture name
+                                        recordstring.Append(frm_PlayerProfile.profilePicName + ",");
+                                        break;
+                                    case 2: //Score
+                                        recordstring.Append(Math.Max(Convert.ToInt32(Scores[playerIndex].Split(',')[2]), Game_Highscore) + ",");
+                                        break;
+                                    case 3: //Times Played
+                                        recordstring.Append((Convert.ToInt32(Scores[playerIndex].Split(',')[3]) + Game_TimesPlayed).ToString() + ",");
+                                        break;
+                                    case 4: //Deaths
+                                        recordstring.Append((Convert.ToInt32(Scores[playerIndex].Split(',')[4]) + Game_Deaths).ToString() + ",");
+                                        break;
+                                    case 5: //Shots Fired
+                                        recordstring.Append((Convert.ToInt32(Scores[playerIndex].Split(',')[5]) + Game_BulletsFired).ToString() + ",");
+                                        break;
+                                    case 6: //Close Calls
+                                        recordstring.Append((Convert.ToInt32(Scores[playerIndex].Split(',')[6]) + Game_CloseCalls).ToString() + ",");
+                                        break;
+                                    case 7: //Dei Ex Machina
+                                        recordstring.Append((Convert.ToInt32(Scores[playerIndex].Split(',')[7]) + Game_DeiExMachinas).ToString());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                switch (field)
+                                {
+                                    case 0: //Profile name
+                                        recordstring.Append(frm_PlayerProfile.profileName + ",");
+                                        break;
+                                    case 1: //Profile Picture name
+                                        recordstring.Append(frm_PlayerProfile.profilePicName + ",");
+                                        break;
+                                    case 2: //Score
+                                        recordstring.Append(Game_Highscore.ToString() + ",");
+                                        break;
+                                    case 3: //Times Played
+                                        recordstring.Append(Game_TimesPlayed.ToString() + ",");
+                                        break;
+                                    case 4: //Deaths
+                                        recordstring.Append(Game_Deaths.ToString() + ",");
+                                        break;
+                                    case 5: //Shots Fired
+                                        recordstring.Append(Game_BulletsFired.ToString() + ",");
+                                        break;
+                                    case 6: //Close Calls
+                                        recordstring.Append(Game_CloseCalls.ToString() + ",");
+                                        break;
+                                    case 7: //Dei Ex Machina
+                                        recordstring.Append(Game_DeiExMachinas.ToString());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        Scores[playerIndex] = recordstring.ToString();
+                        File.WriteAllLines(frm_Menu.HighScoresFilename, Scores);
+                        Game_Saved = true;
+                        //update the Main form
+                        frm_Menu.SetProfileStats();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+            }
         }
     }
     class Animation
